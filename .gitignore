@@ -1,0 +1,21 @@
+# Dependencies & builds
+node_modules/
+.next/
+dist/
+out/
+.vercel/
+
+# Environment
+.env
+.env.*
+!.env.example
+
+# OS & editors
+.DS_Store
+Thumbs.db
+*.log
+
+# Research: archivos sensibles o muy pesados (preferir links externos)
+research/**/*.mp4
+research/**/*.mov
+research/**/raw-pii/

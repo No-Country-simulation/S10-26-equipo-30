@@ -60,3 +60,16 @@ El desafío consistió en **investigar, testear e iterar el flujo completo** des
   * Documento de síntesis con los 3 hallazgos clave.
   * Registro de desafíos reales obtenidos.
   * Presentación para el **Demo Day** (*Before / After* y métricas).
+
+---
+
+## Estructura del repositorio
+
+| Carpeta | Uso |
+|---------|-----|
+| [docs/](./docs/) | Documentación del research por etapa |
+| [research/](./research/) | Evidencia de campo (entrevistas, tests, datos) |
+| [entregables/](./entregables/) | Entregables finales (journey, copy) |
+| [diseno/](./diseno/) | Figma y exports |
+| [prototipo/](./prototipo/) | Web app para deploy en Vercel (Root Directory: `prototipo`) |
+| [scripts/](./scripts/) | Utilidades opcionales |
