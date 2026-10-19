@@ -1,0 +1,408 @@
+**B - Detalles del proyecto**
+
+1. Titulo del proyecto ( texto )
+2. Que problema queres resolver? ( texto )
+3. Descripcion del desafio ( texto )
+4. Que esperas que los equipos entreguen ? ( select - Max 5 )
+   - Propuesta conceptual
+   - Documentacion
+   - Analisis de mercado
+   - MVP
+   - Prototipo
+   - Otro
+
+5. Vertical ( solamente 1 )
+   - Cloud
+   - No Code
+   - Web3
+   - Salesforce
+   - Product Design
+   - UX Research
+   - Content Marketing
+   - Branding
+   - Social Media
+   - Data Science
+   - AI
+   - Vibe Coding
+   - Game Development
+   - AI Agent
+   - Business Intelligence
+   - Growth
+   - Web App Development
+   - Mobile Development
+   - Game Design
+   - Cybersecurity
+
+6. Sectores de negocio ( Max 5 )
+   - Aerospace / Automotriz
+   - Agrotech
+   - AI / Machine Learning
+   - AR / VR / Metaverso
+   - Banca
+   - Bancos y Cooperativas
+   - BioTech
+   - Blockchain / Web3
+   - Business Intelligence / Data Analytics
+   - Ciberseguridad
+   - CivicTech
+   - ClimateTech
+   - Cloud & DevOps
+   - Commerce
+   - Construcción / Real Estate
+   - Construction
+   - Content & Media
+   - Corporate Training / Upskilling
+   - Desarrollo de Videojuegos
+   - E-commerce
+   - Economía Social
+   - EdTech
+   - EDTech
+   - Educación Pública
+   - Education
+   - Entretenimiento / Streaming / Música
+   - FashionTech
+   - FemTech
+   - Fintech
+   - Fitness / Wellness
+   - FoodTech
+   - Future of work
+   - Gaming & Esports
+   - GovTech
+   - Healthtech
+   - HealthTech
+   - HR
+   - HRTech
+   - Insurance
+   - InsurTech
+   - Inversión y Capital de Riesgo
+   - IoT (Internet of Things)
+   - IT
+   - IT Services / Consultoría Tech
+   - LegalTech
+   - Logistics
+   - Manufacturing
+   - Marketing Digital / Growth
+   - MarTech / AdTech
+   - Mass Media
+   - MedTech
+   - ONG / Fundaciones
+   - ONG Empleabilidad
+   - PetTech
+   - PropTech
+   - Recruiting
+   - RegTech
+   - Retail / Marketplaces
+   - SaaS
+   - Salud Mental
+   - Servicios Financieros
+   - Smart Cities
+   - Software - Infrastructure
+   - Sostenibilidad
+   - SportsTech
+   - Supply Chain / LogiTech
+   - Technology
+   - Transportation
+   - Turismo / TravelTech
+
+7. Etapa del proyecto
+   - Idea
+   - POC
+   - Scaling
+   - Legacy
+
+8. Que impacto tendria resolver esto?
+   - Posicionamiento de marca
+   - Expansion de mercado
+   - Eficiencia
+   - Mejorar ingresos
+   - Validacion tecnica
+   - Experiencia de usuario
+   - Otro
+
+9. Roles de interes
+   - AI Engineer
+   - Architect (Software / Solution Architect)
+   - Automation Specialist
+   - Autonomous Agent Engineer
+   - Backend Developer
+   - BI Analyst
+   - BI Developer
+   - Blockchain Developer
+   - Bubble Developer
+   - Cloud Architect
+   - Cloud Developer
+   - Cloud Engineer
+   - Cloud Security Engineer
+   - Community Manager
+   - Content Creator
+   - Conversational Designer
+   - Copywriter
+   - Crypto Engineer
+   - Cybersecurity Engineer
+   - DAO Strategist
+   - Data
+   - Data analyst
+   - Data Architect
+   - Data Engineer
+   - Data Scientist
+   - Data Visualization Specialist
+   - Database Administrator
+   - DevOps Engineer
+   - DevSecOps Engineer
+   - Ethical Hacker
+   - Flutter Developer
+   - Frontend Developer
+   - Full Stack Developer
+   - Functional Analyst
+   - Game Artist
+   - Game Designer
+   - Game Developer
+   - Game Writer
+   - Graphic Designer
+   - Growth Hacker
+   - LLM Engineer
+   - Machine Learning
+   - Machine Learning Engineer
+   - Marketing Specialist
+   - Mobile Developer (iOS/Android)
+   - Motion Designer
+   - NFT developer
+   - No Code Developer
+   - Privacy Engineer
+   - Product Designer
+   - Product Manager
+   - Product Owner
+   - Project Manager
+   - Prompt Engineer
+   - QA Engineer
+   - QA Tester
+   - React Native Developer
+   - Social Media Manager
+   - Software Engineer
+   - Sound Engineer
+   - Tech Lead
+   - Tokenomics Specialist
+   - UX Researcher
+   - Ux Writer
+   - UX/UI Designer
+   - Vibe Coder
+   - Web3 Engineer
+
+10. Tecnologías / Herramientas de interés
+    - 3ds Max
+    - Ableton Live (sound)
+    - ActiveCampaign
+    - Adobe Illustrator
+    - Adobe XD
+    - After Effects
+    - Ahrefs
+    - Airbyte
+    - Airtable
+    - Alchemy
+    - Amazon Redshift
+    - Amazon S3
+    - Amplitude
+    - Angular
+    - Ansible
+    - Antigravity 2.0
+    - Antigravity IDE
+    - Apache Airflow
+    - Apache Kafka
+    - ASP.NET Core
+    - Astro
+    - AWS
+    - AWS CloudFormation
+    - AWS EC2
+    - AWS Glue
+    - AWS Lambda
+    - AWS Security Hub
+    - Azure
+    - Azure Data Lake Storage
+    - Azure Security Center
+    - Blender
+    - Bolt
+    - Bootstrap
+    - Brevo
+    - Buffer
+    - Bug Reporting en Jira
+    - Bug Reporting en Trello
+    - Burp Suite
+    - C#
+    - C++
+    - Canva
+    - ChatGPT
+    - ChromaDb
+    - Chrome DevTools
+    - Claude Code
+    - Claude Design
+    - Cloud Design
+    - Cloud Functions
+    - Confluence
+    - Crazy Egg
+    - CSS
+    - Cursor
+    - Cypress
+    - Dagster
+    - Data Build Tool
+    - Databricks
+    - Datadog
+    - dbt
+    - Discord
+    - Django
+    - Docker
+    - Dune Analytics
+    - DynamoDB
+    - Elastic Security
+    - Emotion
+    - Excel
+    - Express.js
+    - FAISS
+    - FastAPI
+    - FigJam
+    - Figma
+    - Figma Dev Mode
+    - Figma Libraries
+    - Firebase
+    - Firefox Inspector
+    - Fivetran
+    - Flask
+    - Flutter
+    - FMOD
+    - FullStory
+    - Gatsby
+    - Gemini CLI
+    - GitHub Actions
+    - GitLab CI
+    - Go
+    - Google BigQuery
+    - Google Cloud
+    - Google Cloud Storage
+    - Google Data Studio
+    - Google Meet
+    - Google Sheets
+    - Gradio
+    - Hootsuite
+    - Hotjar
+    - HTML
+    - HubSpot
+    - HuggingFace
+    - Illustrator
+    - Infura
+    - Insomnia
+    - InVision
+    - Ionic
+    - IPFS
+    - Jasper
+    - Java
+    - JavaScript
+    - Jenkins
+    - Jest
+    - Jira
+    - Kali Linux
+    - Kotlin
+    - Kubernetes
+    - Kubernetes Engine
+    - LangChain
+    - LangGraph
+    - Laravel
+    - Less
+    - LlamaIndex
+    - Lookback
+    - Looker
+    - Lovable
+    - Mailchimp
+    - Make
+    - Maya
+    - Maze
+    - Meta Business Suite
+    - MetaMask
+    - Metasploit
+    - Metricool
+    - Microsoft Power BI
+    - MicroStrategy
+    - Miro
+    - Mixpanel
+    - MongoDB
+    - MySQL
+    - Nessus
+    - NestJS
+    - New Relic
+    - Next.js
+    - Nmap
+    - Node.js
+    - Notion
+    - Nuxt.js
+    - OpenAI API
+    - OpenAI Codex
+    - OpenCode
+    - Optimal Workshop
+    - OWASP ZAP
+    - Photoshop
+    - PHP
+    - Pinecone
+    - Pipedrive
+    - Playwright
+    - PostgreSQL
+    - Postman
+    - Power BI
+    - Prefect
+    - Pulumi
+    - Python
+    - PyTorch
+    - Qlik
+    - React
+    - React Native
+    - Redis
+    - Remix IDE
+    - Replit
+    - Ruby
+    - Ruby on Rails
+    - Rust
+    - Salesforce
+    - Sass
+    - scikit-learn
+    - Selenium
+    - SEMrush
+    - Sketch
+    - Slack
+    - Snowflake
+    - Solidity
+    - Splunk
+    - Spring Boot
+    - SQL Server
+    - SQLite
+    - Storybook
+    - Streamlit
+    - Styled Components
+    - Substance Painter
+    - Supabase
+    - Svelte
+    - Swagger UI
+    - Swift
+    - Tableau
+    - Tableu
+    - Tailwind CSS
+    - TensorFlow
+    - Terraform
+    - Testing Library
+    - TestRail
+    - The Graph
+    - Trello
+    - Truffle
+    - TypeScript
+    - Unity
+    - Unreal Engine
+    - Useberry
+    - v0
+    - Visual Studio Code
+    - Vitest
+    - Vue.js
+    - WalletConnect
+    - Weaviate
+    - Webflow
+    - Windsurf
+    - Wireshark
+    - WordPress
+    - Xamarin
+    - Xray
+    - Zapier
