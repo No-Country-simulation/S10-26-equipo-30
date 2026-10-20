@@ -5,6 +5,7 @@ import { useEffect, useId, useRef, useState } from "react";
 type MultiSelectProps = {
   id?: string;
   label: string;
+  hideLabel?: boolean;
   required?: boolean;
   optional?: boolean;
   options: readonly string[];
@@ -17,6 +18,7 @@ type MultiSelectProps = {
 export function MultiSelect({
   id: idProp,
   label,
+  hideLabel = false,
   required,
   optional,
   options,
@@ -63,12 +65,14 @@ export function MultiSelect({
 
   return (
     <div className="field" ref={rootRef}>
-      <label htmlFor={id} className="field-label">
-        {label}
-        {required ? <span className="field-required">*</span> : null}
-        {optional ? <span className="field-optional"> (opcional)</span> : null}
-        {max > 1 ? <span className="field-optional"> (Max {max})</span> : null}
-      </label>
+      {hideLabel ? null : (
+        <label htmlFor={id} className="field-label">
+          {label}
+          {required ? <span className="field-required">*</span> : null}
+          {optional ? <span className="field-optional"> (opcional)</span> : null}
+          {max > 1 ? <span className="field-optional"> (Max {max})</span> : null}
+        </label>
+      )}
       <div className="multi-select-root">
         <button
           type="button"
@@ -77,6 +81,7 @@ export function MultiSelect({
           onClick={() => setOpen((o) => !o)}
           aria-expanded={open}
           aria-haspopup="listbox"
+          aria-label={hideLabel ? label : undefined}
         >
           <span className={value.length ? "" : "multi-select-placeholder"}>
             {triggerLabel}
