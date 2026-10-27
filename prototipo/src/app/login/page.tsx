@@ -1,10 +1,7 @@
 import { Suspense } from "react";
-import { LoginPanel } from "@/app/login/login-panel";
-import { isSupabaseConfigured } from "@/lib/supabase/env";
+import { LoginPageContent } from "@/app/login/login-page-content";
 
 export default function LoginPage() {
-  const configured = isSupabaseConfigured();
-
   return (
     <main className="page-shell page-shell--narrow">
       <Suspense
@@ -14,7 +11,7 @@ export default function LoginPage() {
           </div>
         }
       >
-        <LoginPanel configured={configured} />
+        <LoginPageContent />
       </Suspense>
     </main>
   );

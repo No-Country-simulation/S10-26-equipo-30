@@ -14,7 +14,12 @@ Antes de mergear a `main`:
 | `NEXT_PUBLIC_SUPABASE_URL` | ✓ | ✓ |
 | `NEXT_PUBLIC_SUPABASE_ANON_KEY` | ✓ | ✓ |
 
-**Redeploy** del deployment del PR tras guardar variables.
+- Tipo **Environment Variable** (no “Change to Config”): el prefijo `NEXT_PUBLIC_` es intencional.
+- Marcá **Preview** y **Production** (si solo marcás Production, la URL del PR sigue sin keys).
+- **Redeploy** del deployment del PR tras guardar (Deployments → ⋮ → Redeploy, idealmente sin cache).
+
+**Comprobar en preview:** abrí `https://<tu-preview>.vercel.app/api/diagnostics/supabase-env`  
+Debe responder `{"configured":true,"hasUrl":true,"hasAnonKey":true}`. Si `configured` es `false`, Vercel no inyectó las variables en ese deploy.
 
 ## Supabase
 

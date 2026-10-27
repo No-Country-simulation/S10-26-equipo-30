@@ -27,7 +27,14 @@ export function GoogleSignInButton({ nextPath }: GoogleSignInButtonProps) {
         },
       });
       if (oauthError) {
-        setError(oauthError.message);
+        const msg = oauthError.message.toLowerCase();
+        if (msg.includes("provider") && msg.includes("not enabled")) {
+          setError(
+            "Activá Google en Supabase: Authentication → Providers → Google (Enable + Client ID/Secret).",
+          );
+        } else {
+          setError(oauthError.message);
+        }
         setLoading(false);
       }
     } catch {

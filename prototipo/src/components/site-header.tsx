@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { connection } from "next/server";
 import { AuthControls } from "@/components/auth-controls";
 import { isSupabaseConfigured } from "@/lib/supabase/env";
 import { getAuthUser } from "@/lib/supabase/server";
@@ -10,6 +11,7 @@ const navItems = [
 ] as const;
 
 export async function SiteHeader() {
+  await connection();
   const supabaseEnabled = isSupabaseConfigured();
   const user = supabaseEnabled ? await getAuthUser() : null;
 

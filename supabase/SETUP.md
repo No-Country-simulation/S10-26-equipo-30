@@ -59,15 +59,21 @@ Cuando tengan dominio fijo de preview/production, sumen esa URL exacta.
 
 Hasta que el prototipo use auth, el esquema y las tablas ya funcionan; no hace falta Google el día 1.
 
-## 3b. Google OAuth (requerido para auth en el prototipo)
+## 3b. Google OAuth (requerido — error `Unsupported provider: provider is not enabled`)
 
-Antes de probar login en preview:
+Ese JSON aparece cuando **Google está apagado** en Supabase. Obligatorio antes de probar login:
 
-1. **Authentication → Providers → Google** → Enable.
-2. [Google Cloud Console](https://console.cloud.google.com/apis/credentials) → **OAuth client ID** → Web application.
-3. **Authorized JavaScript origins:** `http://localhost:3000`, `https://<tu-preview>.vercel.app` (y/o `https://*.vercel.app` si Google lo permite en tu config).
-4. **Authorized redirect URI:** la que muestra Supabase, p. ej. `https://<PROJECT_REF>.supabase.co/auth/v1/callback`.
-5. Client ID + Secret en Supabase → Save.
+1. Dashboard Supabase → **Authentication** → **Providers** → **Google**.
+2. Activar **Enable Sign in with Google**.
+3. [Google Cloud Console](https://console.cloud.google.com/apis/credentials) → **OAuth client ID** → tipo **Web application**.
+4. **Authorized JavaScript origins:**  
+   `http://localhost:3000`  
+   `https://<tu-proyecto>.vercel.app` (la preview concreta; Google no acepta `*.vercel.app` en origins).
+5. **Authorized redirect URIs:** copiá la de Supabase en la misma pantalla del provider, forma:  
+   `https://<PROJECT_REF>.supabase.co/auth/v1/callback`
+6. Pegar **Client ID** y **Client Secret** en Supabase → **Save**.
+
+Sin el paso 2 (Enable + Save), el botón “Continuar con Google” falla aunque `.env.local` esté bien.
 
 ## 4. Variables en Vercel (preview + production del PR)
 

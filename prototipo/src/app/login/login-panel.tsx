@@ -25,7 +25,9 @@ export function LoginPanel({ configured }: LoginPanelProps) {
       ? "Supabase no está configurado en este entorno."
       : errorParam === "oauth"
         ? "No se pudo completar el inicio de sesión con Google."
-        : null;
+        : errorParam === "google_disabled"
+          ? "Google no está habilitado en Supabase (Authentication → Providers → Google)."
+          : null;
 
   return (
     <div className="form-card login-card">
