@@ -3,7 +3,7 @@ import { simulationDashboard } from "@/lib/simulation-dashboard-data";
 
 export default function SimulationPage() {
   return (
-    <main className="page-shell page-shell--wide sim-page">
+    <main className="page-shell sim-page">
       <SimulationDashboard data={simulationDashboard} />
     </main>
   );
