@@ -17,7 +17,7 @@ export default function CargarProyectoPlanPage() {
     <main className="page-shell page-shell--narrow">
       <FormCard
         backHref="/"
-        continueHref="/cargar-proyecto/guiado"
+        continueHref="/cargar-proyecto/modo"
         continueLabel="Siguiente"
       >
         <article className="plan-card">

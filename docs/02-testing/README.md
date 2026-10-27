@@ -10,3 +10,5 @@ Piezas del flujo UXFlow:
 4. Recuperación de abandonos  
 5. Contexto adicional  
 6. Aprobación y experiencia post-aprobación  
+
+**Persistencia (Supabase):** esquema SQL en [`supabase/migrations/`](../../supabase/migrations/) y guía en [`modelo-datos-supabase.md`](./modelo-datos-supabase.md).

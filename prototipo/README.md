@@ -26,8 +26,10 @@ Abrí [http://localhost:3000](http://localhost:3000).
 |------|----------|-------------------|
 | `/` | Landing «Sube tu desafío» + Cómo funciona | form-01 |
 | `/cargar-proyecto` | Plan Free Trial | form-02 |
+| `/cargar-proyecto/modo` | Elegir flujo: clásico o preguntas guiadas | — |
 | `/cargar-proyecto/compania` | Información de la compañía (esquema A) | form-03 |
 | `/cargar-proyecto/detalles` | Detalles del proyecto (esquema B) | form-04 |
+| `/cargar-proyecto/guiado` | Mismo esquema, una pregunta por paso | — |
 | `/post-envio` | Confirmación de envío | form-05 |
 
 Los datos del formulario se guardan en `sessionStorage` entre pasos (sin backend). Esquemas de campos: [`docs/02-testing/esquema-del-formulario-inicial/`](../docs/02-testing/esquema-del-formulario-inicial/).

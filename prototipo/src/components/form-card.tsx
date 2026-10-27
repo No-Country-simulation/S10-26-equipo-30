@@ -11,6 +11,7 @@ type FormCardProps = {
   continueLabel?: string;
   continueDisabled?: boolean;
   continueType?: "button" | "submit";
+  hideContinue?: boolean;
   children: ReactNode;
 };
 
@@ -23,6 +24,7 @@ export function FormCard({
   continueLabel = "Continuar",
   continueDisabled,
   continueType = "button",
+  hideContinue = false,
   children,
 }: FormCardProps) {
   return (
@@ -41,7 +43,7 @@ export function FormCard({
         ) : (
           <span />
         )}
-        {continueHref ? (
+        {hideContinue ? null : continueHref ? (
           <GradientButton href={continueHref}>{continueLabel}</GradientButton>
         ) : continueType === "submit" ? (
           <GradientButton type="submit" disabled={continueDisabled}>

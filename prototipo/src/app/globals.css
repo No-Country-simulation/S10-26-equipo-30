@@ -795,6 +795,114 @@ body:has(.form-shell) .site-header {
   margin: 0;
 }
 
+.flow-mode-header {
+  margin-bottom: 1.75rem;
+}
+
+.flow-mode-eyebrow {
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--nc-text-muted);
+  margin: 0 0 0.35rem;
+}
+
+.flow-mode-title {
+  font-size: clamp(1.35rem, 3vw, 1.75rem);
+  font-weight: 700;
+  margin: 0 0 0.65rem;
+  letter-spacing: -0.02em;
+}
+
+.flow-mode-lead {
+  margin: 0;
+  color: var(--nc-text-muted);
+  font-size: 0.95rem;
+  line-height: 1.55;
+  max-width: 52ch;
+}
+
+.flow-mode-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1rem;
+}
+
+@media (max-width: 720px) {
+  .flow-mode-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.flow-mode-card {
+  display: flex;
+  flex-direction: column;
+  gap: 0.65rem;
+  padding: 1.25rem 1.35rem;
+  border-radius: 1rem;
+  border: 1px solid var(--nc-border);
+  background: var(--nc-card-inner);
+  transition: border-color 0.15s, box-shadow 0.15s, transform 0.15s;
+}
+
+.flow-mode-card:hover {
+  border-color: rgba(139, 92, 246, 0.45);
+  box-shadow: 0 0 0 1px rgba(139, 92, 246, 0.15);
+  transform: translateY(-1px);
+}
+
+.flow-mode-badge {
+  align-self: flex-start;
+  font-size: 0.7rem;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  padding: 0.2rem 0.55rem;
+  border-radius: 9999px;
+  border: 1px solid rgba(34, 211, 238, 0.35);
+  color: #67e8f9;
+  background: rgba(34, 211, 238, 0.08);
+}
+
+.flow-mode-card-title {
+  margin: 0;
+  font-size: 1.15rem;
+  font-weight: 650;
+}
+
+.flow-mode-card-desc {
+  margin: 0;
+  font-size: 0.88rem;
+  line-height: 1.5;
+  color: var(--nc-text-muted);
+  flex: 1;
+}
+
+.flow-mode-features {
+  list-style: none;
+  margin: 0.25rem 0 0;
+  padding: 0;
+  font-size: 0.82rem;
+  color: #94a3b8;
+  display: grid;
+  gap: 0.35rem;
+}
+
+.flow-mode-features li::before {
+  content: "·";
+  margin-right: 0.35rem;
+  color: var(--nc-accent-purple);
+}
+
+.flow-mode-cta {
+  margin-top: 0.35rem;
+  font-size: 0.88rem;
+  font-weight: 600;
+  background: var(--nc-gradient);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
 .guided-card {
   display: flex;
   flex-direction: column;

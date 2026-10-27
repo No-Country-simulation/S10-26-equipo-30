@@ -249,7 +249,7 @@ export function GuidedForm() {
 
         <div className="guided-nav">
           {stepIndex === 0 ? (
-            <Link href="/cargar-proyecto" className="form-back-link">
+            <Link href="/cargar-proyecto/modo" className="form-back-link">
               ← Atrás
             </Link>
           ) : (

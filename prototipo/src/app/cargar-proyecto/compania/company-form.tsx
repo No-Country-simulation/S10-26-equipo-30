@@ -49,7 +49,7 @@ export function CompanyForm() {
   return (
     <form onSubmit={onSubmit}>
       <FormCard
-        backHref="/cargar-proyecto"
+        backHref="/cargar-proyecto/modo"
         backIconOnly
         continueLabel="Continuar"
         continueType="submit"
