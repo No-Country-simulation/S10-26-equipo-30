@@ -83,8 +83,12 @@ where pr.email = 'participante@example.com'
 order by s.started_at desc;
 ```
 
+## Crear el ambiente
+
+Guía operativa: [`supabase/SETUP.md`](../../supabase/SETUP.md).
+
 ## Próximo paso técnico (fuera de este doc)
 
-1. Aplicar migración en proyecto Supabase del equipo.
+1. Aplicar migración en proyecto Supabase del equipo (ver SETUP.md).
 2. Promover emails del equipo a `researcher`.
 3. Integrar en `prototipo/` (auth + crear sesión + eventos + submit) — iteración siguiente.

@@ -46,6 +46,10 @@ Misma forma que el prototipo (`prototipo/src/lib/form-storage.ts`):
 | `submit_success` | Antes de insertar `project_submissions` |
 | `post_envio_view` | Pantalla `/post-envio` |
 
+## Crear el ambiente (primera vez)
+
+Guía paso a paso: **[SETUP.md](./SETUP.md)** (proyecto nuevo, SQL, Vercel, `.env.local`).
+
 ## Cómo aplicar la migración
 
 ### Opción A — SQL Editor (rápido)
@@ -53,7 +57,8 @@ Misma forma que el prototipo (`prototipo/src/lib/form-storage.ts`):
 1. Crear proyecto en [Supabase](https://supabase.com/dashboard).
 2. **Authentication → Providers → Google** (cuando integren auth).
 3. **SQL → New query** → pegar contenido de  
-   `migrations/20260327100000_uxflow_research_schema.sql` → **Run**.
+   `migrations/20261027100000_uxflow_research_schema.sql` → **Run**.
+4. Verificar con `verify.sql`.
 
 ### Opción B — Supabase CLI
 

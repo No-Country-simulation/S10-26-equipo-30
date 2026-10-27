@@ -1,4 +1,7 @@
 import Link from "next/link";
+import { AuthControls } from "@/components/auth-controls";
+import { isSupabaseConfigured } from "@/lib/supabase/env";
+import { getAuthUser } from "@/lib/supabase/server";
 
 const navItems = [
   { href: "#", label: "Simulación Laboral", active: false },
@@ -6,7 +9,10 @@ const navItems = [
   { href: "#", label: "Mis Proyectos", active: false },
 ] as const;
 
-export function SiteHeader() {
+export async function SiteHeader() {
+  const supabaseEnabled = isSupabaseConfigured();
+  const user = supabaseEnabled ? await getAuthUser() : null;
+
   return (
     <header className="site-header">
       <div className="site-header-inner">
@@ -30,7 +36,7 @@ export function SiteHeader() {
             <GlobeIcon />
             ES
           </button>
-          <div className="avatar" aria-hidden />
+          <AuthControls user={user} supabaseEnabled={supabaseEnabled} />
         </div>
       </div>
     </header>

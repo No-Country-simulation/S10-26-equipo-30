@@ -32,7 +32,11 @@ Abrí [http://localhost:3000](http://localhost:3000).
 | `/cargar-proyecto/guiado` | Mismo esquema, una pregunta por paso | — |
 | `/post-envio` | Confirmación de envío | form-05 |
 
-Los datos del formulario se guardan en `sessionStorage` entre pasos (sin backend). Esquemas de campos: [`docs/02-testing/esquema-del-formulario-inicial/`](../docs/02-testing/esquema-del-formulario-inicial/).
+Los datos del formulario se guardan en `sessionStorage` entre pasos. **Login:** Google vía Supabase (`/login`); rutas `/cargar-proyecto/*` y `/post-envio` requieren sesión si hay variables Supabase configuradas.
+
+Variables: copiar `.env.example` → `.env.local`. Setup Supabase: [`../supabase/SETUP.md`](../supabase/SETUP.md).
+
+Esquemas de campos: [`docs/02-testing/esquema-del-formulario-inicial/`](../docs/02-testing/esquema-del-formulario-inicial/).
 
 ## Rama de trabajo
 

@@ -122,6 +122,140 @@ a {
   gap: 0.75rem;
 }
 
+.auth-signin-link {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--nc-accent-cyan);
+  padding: 0.35rem 0.65rem;
+  border-radius: 9999px;
+  border: 1px solid rgba(34, 211, 238, 0.35);
+  transition: background 0.15s, border-color 0.15s;
+}
+
+.auth-signin-link:hover {
+  background: rgba(34, 211, 238, 0.08);
+  border-color: rgba(34, 211, 238, 0.55);
+}
+
+.auth-user {
+  display: flex;
+  align-items: center;
+  gap: 0.45rem;
+  max-width: 12rem;
+}
+
+.auth-avatar {
+  width: 2rem;
+  height: 2rem;
+  border-radius: 9999px;
+  object-fit: cover;
+  border: 1px solid var(--nc-border);
+}
+
+.auth-avatar--fallback {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(99, 102, 241, 0.25);
+  font-size: 0.85rem;
+  font-weight: 700;
+}
+
+.auth-user-label {
+  font-size: 0.8rem;
+  color: var(--nc-text-muted);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.auth-signout {
+  font-size: 0.75rem;
+  color: #94a3b8;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  padding: 0.2rem 0.35rem;
+  border-radius: 0.35rem;
+}
+
+.auth-signout:hover {
+  color: var(--nc-text);
+  background: rgba(148, 163, 184, 0.12);
+}
+
+.auth-pill {
+  font-size: 0.7rem;
+  padding: 0.2rem 0.5rem;
+  border-radius: 9999px;
+  border: 1px solid var(--nc-border);
+}
+
+.auth-pill--muted {
+  color: #64748b;
+}
+
+.login-card {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  margin-top: 1rem;
+}
+
+.login-title {
+  margin: 0;
+  font-size: 1.5rem;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+}
+
+.login-lead,
+.login-footnote,
+.login-config-hint {
+  margin: 0;
+  font-size: 0.9rem;
+  line-height: 1.55;
+  color: var(--nc-text-muted);
+}
+
+.login-footnote {
+  font-size: 0.8rem;
+  color: #64748b;
+}
+
+.google-signin-wrap {
+  display: flex;
+  flex-direction: column;
+  gap: 0.65rem;
+}
+
+.google-signin-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.65rem;
+  width: 100%;
+  padding: 0.75rem 1rem;
+  border-radius: 0.65rem;
+  border: 1px solid var(--nc-border);
+  background: #fff;
+  color: #1e293b;
+  font-size: 0.95rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: box-shadow 0.15s, transform 0.15s;
+}
+
+.google-signin-btn:hover:not(:disabled) {
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+  transform: translateY(-1px);
+}
+
+.google-signin-btn:disabled {
+  opacity: 0.7;
+  cursor: wait;
+}
+
 .lang-btn {
   display: inline-flex;
   align-items: center;
