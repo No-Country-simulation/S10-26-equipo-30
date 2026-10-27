@@ -24,6 +24,7 @@ Abrí [http://localhost:3000](http://localhost:3000).
 
 | Ruta | Pantalla | Referencia diseño |
 |------|----------|-------------------|
+| `/simulation` | Dashboard simulación (métricas + equipos, datos demo) | ref. companies/simulation |
 | `/` | Landing «Sube tu desafío» + Cómo funciona | form-01 |
 | `/cargar-proyecto` | Plan Free Trial | form-02 |
 | `/cargar-proyecto/modo` | Elegir flujo: clásico o preguntas guiadas | — |
