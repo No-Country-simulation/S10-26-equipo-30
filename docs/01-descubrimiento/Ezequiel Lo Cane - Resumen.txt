@@ -1,0 +1,53 @@
+## Overview  
+La conversación aborda la experiencia de un participante con la plataforma No Country, especialmente en el contexto de plantear 
+desafíos para equipos de estudiantes relacionados con Casa Justina y proyectos de innovación como robótica o inteligencia artificial. 
+Se discuten las etapas de preparación, carga de desafíos, seguimiento a los equipos y la interacción durante el proceso, así como 
+la valoración del resultado final.
+
+## Main Content
+
+**Participación y planteamiento de desafíos en No Country**  
+El participante confirmó haber participado varias veces en No Country, incluyendo en 2024 y años anteriores. Su experiencia se 
+centró en presentar desafíos vinculados con Casa Justina, particularmente en el área de innovación, con temáticas como robótica y 
+transporte de órganos con drones. Para cada desafío, elaboraban un tipo de brief o assessment para que los equipos comprendieran 
+el problema y pudieran desarrollar soluciones. Esta etapa fue organizada y decidieron cada contenido del brief, aunque no quedó 
+claro si ellos mismos cargaban la información en la plataforma o si se la enviaban a otra persona para hacerlo.
+
+**Carga y uso de la plataforma No Country**  
+El entrevistado no recordaba haber cargado directamente los briefs en la plataforma, sino que entregaban la información a un 
+intermediario (Leandro). Recordó que el seguimiento de los proyectos fue intuitivo pero limitado, con información sencilla sobre 
+si los equipos estaban desarrollando ideas, sin parámetros detallados ni indicadores explícitos del avance de los equipos. 
+Este aspecto fue señalado como una limitación, pues la visibilidad sobre el progreso no era completa ni detallada.
+
+**Interacción y apoyo a los equipos participantes**  
+Hubo instancias de preguntas y respuestas, generalmente en videollamadas, aunque la interacción no era frecuente ni asíncrona. 
+La plataforma no permitía un contacto directo con los estudiantes ni recibir preguntas fuera de esas sesiones. El participante 
+consideró esta falta de comunicación fluida como un defecto, pues sentía que al no tener visibilidad adecuada, dependía de terceros 
+para entender el estado de los proyectos. También comentó sobre la baja participación activa en las videollamadas, la existencia de 
+videos apagados y manifestó que esperaba mayor respeto por parte de los participantes en esas instancias.
+
+**Evaluación del proceso y resultados finales**  
+Aunque la experiencia general del proceso la calificó como un 4 sobre 10, reconoció que el resultado final fue satisfactorio. 
+De entre unos 20 participantes (o equipos; existió cierta confusión con los números), llegaron a la final solo 3 o 4, pero esos 
+equipos superaron las expectativas. Se resaltó que el MVP (producto mínimo viable) desarrollado con uno de los equipos 
+finalistas (Aucan) fue muy bueno y sirvió como base para posteriores mejoras. El participante valoró la interacción con usuarios en 
+el desarrollo de software para asegurar la alineación entre lo solicitado y lo entregado, señalando que en el proceso actual, 
+esa comunicación directa estuvo limitada.
+
+## Facts & Figures  
+- El participante asistió al menos dos veces a No Country, una de ellas en 2024.  
+- De aproximadamente 20 personas o equipos, solo 3 o 4 llegaron a la final.  
+- La experiencia general del proceso fue calificada con un 4 sobre 10.  
+
+## Key Insights  
+- La elaboración de un brief claro para los desafíos fue crucial para que los equipos pudieran entender el problema y pensar en 
+soluciones.  
+- La plataforma de No Country ofrecía información básica sobre el avance de los equipos, pero carecía de indicadores y 
+comunicación directa efectiva.  
+- La interacción en videollamadas entre jueces y participantes fue limitada y en ocasiones poco respetuosa, afectando la 
+dinámica del desafío.  
+- A pesar de dificultades en el proceso, el producto final desarrollado fue satisfactorio y superó las expectativas.  
+
+## Open Questions  
+- No quedó claro si los briefs se cargaban directamente en la plataforma por los organizadores o si se enviaban a un intermediario.  
+- Se desconoce si se está considerando mejorar la interacción y visibilidad del avance de equipos en futuras ediciones.

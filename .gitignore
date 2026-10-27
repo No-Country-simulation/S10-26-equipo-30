@@ -19,3 +19,7 @@ Thumbs.db
 research/**/*.mp4
 research/**/*.mov
 research/**/raw-pii/
+
+# Descubrimiento: entrevistas con datos sensibles
+docs/01-descubrimiento/Ezequiel Lo Cane - Entrevista.txt
+
