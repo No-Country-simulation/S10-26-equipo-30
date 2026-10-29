@@ -59,6 +59,14 @@ Cuando tengan dominio fijo de preview/production, sumen esa URL exacta.
 
 Hasta que el prototipo use auth, el esquema y las tablas ya funcionan; no hace falta Google el día 1.
 
+## 3a. Invitado (Anonymous)
+
+Para el botón **Continuar como invitado**:
+
+1. **Authentication → Providers → Anonymous** → Enable → Save.
+
+Sin eso, el login anónimo responde que el provider está deshabilitado. El invitado igual genera un usuario en `auth.users` y un `profiles` (email vacío, nombre «Invitado»), así el formulario se guarda con las mismas tablas.
+
 ## 3b. Google OAuth (requerido — error `Unsupported provider: provider is not enabled`)
 
 Ese JSON aparece cuando **Google está apagado** en Supabase. Obligatorio antes de probar login:

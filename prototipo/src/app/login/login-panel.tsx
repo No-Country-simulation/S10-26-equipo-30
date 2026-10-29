@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import { GoogleSignInButton } from "@/components/google-sign-in-button";
+import { GuestSignInButton } from "@/components/guest-sign-in-button";
 
 function safeNextPath(raw: string | null): string {
   if (!raw || !raw.startsWith("/") || raw.startsWith("//")) {
@@ -36,14 +37,17 @@ export function LoginPanel({ configured }: LoginPanelProps) {
       </Link>
       <h1 className="login-title">Identificá tu sesión de test</h1>
       <p className="login-lead">
-        Usamos Google para saber qué cuenta del equipo o participante está probando el flujo.
-        Los datos del formulario se asociarán a esta sesión en etapas posteriores.
+        Entrá con Google para identificar tu cuenta, o seguí como invitado si preferís no
+        vincularla. En ambos casos el recorrido del formulario se guarda para el research.
       </p>
 
       {errorMessage ? <p className="form-error">{errorMessage}</p> : null}
 
       {configured ? (
-        <GoogleSignInButton nextPath={nextPath} />
+        <>
+          <GoogleSignInButton nextPath={nextPath} />
+          <GuestSignInButton nextPath={nextPath} />
+        </>
       ) : (
         <p className="login-config-hint">
           Configurá <code>NEXT_PUBLIC_SUPABASE_URL</code> y{" "}
@@ -53,8 +57,8 @@ export function LoginPanel({ configured }: LoginPanelProps) {
       )}
 
       <p className="login-footnote">
-        Al continuar aceptás que registramos tu email de Google para research interno del equipo
-        UXFlow.
+        Con Google registramos el email para el research interno. Como invitado no pedimos cuenta:
+        igual se guarda el formulario, asociado a una sesión anónima.
       </p>
     </div>
   );

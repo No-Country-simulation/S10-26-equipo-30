@@ -6,14 +6,17 @@ import { FormCard } from "@/components/form-card";
 import { countries, dialCodeForCountry } from "@/lib/countries";
 import { organizationSizes, organizationTypes } from "@/lib/form-options";
 import { loadDraft, saveCompany, type CompanyFormData } from "@/lib/form-storage";
+import { logFormEvent, saveFormCheckpoint } from "@/lib/research-persistence";
 
 export function CompanyForm() {
   const router = useRouter();
   const [form, setForm] = useState<CompanyFormData>(() => loadDraft().company);
   const [error, setError] = useState<string | null>(null);
+  const [submitting, setSubmitting] = useState(false);
 
   useEffect(() => {
     setForm(loadDraft().company);
+    void logFormEvent("screen_view", "compania", { screen: "compania" }).catch(() => {});
   }, []);
 
   function update<K extends keyof CompanyFormData>(key: K, value: CompanyFormData[K]) {
@@ -29,7 +32,7 @@ export function CompanyForm() {
     }));
   }
 
-  function onSubmit(e: FormEvent) {
+  async function onSubmit(e: FormEvent) {
     e.preventDefault();
     if (
       !form.companyName.trim() ||
@@ -39,11 +42,21 @@ export function CompanyForm() {
       !form.phoneNumber.trim()
     ) {
       setError("Completá todos los campos obligatorios.");
+      void logFormEvent("validation_error", "compania", { screen: "compania" }).catch(() => {});
       return;
     }
     setError(null);
+    setSubmitting(true);
     saveCompany(form);
-    router.push("/cargar-proyecto/detalles");
+    try {
+      const draft = loadDraft();
+      await saveFormCheckpoint(draft, "compania", "screen_complete");
+      await logFormEvent("screen_complete", "compania", { screen: "compania" });
+      router.push("/cargar-proyecto/detalles");
+    } catch (cause) {
+      setError(cause instanceof Error ? cause.message : "No se pudo guardar este paso.");
+      setSubmitting(false);
+    }
   }
 
   return (
@@ -51,8 +64,9 @@ export function CompanyForm() {
       <FormCard
         backHref="/cargar-proyecto/modo"
         backIconOnly
-        continueLabel="Continuar"
+        continueLabel={submitting ? "Guardando…" : "Continuar"}
         continueType="submit"
+        continueDisabled={submitting}
       >
         <h1 className="section-heading">
           <span className="section-icon" aria-hidden>

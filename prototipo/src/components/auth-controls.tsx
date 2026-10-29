@@ -29,7 +29,9 @@ export function AuthControls({ user, supabaseEnabled }: AuthControlsProps) {
     );
   }
 
-  const label = user.fullName ?? user.email.split("@")[0] ?? "Tester";
+  const label = user.isAnonymous
+    ? "Invitado"
+    : (user.fullName ?? user.email.split("@")[0] ?? "Tester");
 
   async function signOut() {
     const supabase = createClient();
@@ -48,7 +50,7 @@ export function AuthControls({ user, supabaseEnabled }: AuthControlsProps) {
           {label.charAt(0).toUpperCase()}
         </span>
       )}
-      <span className="auth-user-label" title={user.email}>
+      <span className="auth-user-label" title={user.isAnonymous ? "Sesión de invitado" : user.email}>
         {label}
       </span>
       <button type="button" className="auth-signout" onClick={() => void signOut()}>

@@ -4,6 +4,7 @@ import { useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
 import { GradientButton } from "@/components/gradient-button";
 import { clearDraft } from "@/lib/form-storage";
+import { logFormEvent } from "@/lib/research-persistence";
 
 export function SuccessView() {
   const searchParams = useSearchParams();
@@ -13,6 +14,7 @@ export function SuccessView() {
     if (searchParams.get("enviado") === "1") {
       setShowToast(true);
       clearDraft();
+      void logFormEvent("post_envio_view", "post-envio").catch(() => {});
       const timer = window.setTimeout(() => setShowToast(false), 5000);
       return () => window.clearTimeout(timer);
     }

@@ -3,4 +3,5 @@ export type AuthUserSummary = {
   email: string;
   fullName: string | null;
   avatarUrl: string | null;
+  isAnonymous: boolean;
 };

@@ -27,6 +27,7 @@ import {
   type ProjectDraft,
   type ProjectFormData,
 } from "@/lib/form-storage";
+import { logFormEvent, saveFormCheckpoint, submitFormTest } from "@/lib/research-persistence";
 
 type GuidedSession = {
   draft: ProjectDraft;
@@ -103,6 +104,7 @@ export function GuidedForm() {
   const [local, setLocal] = useState<GuidedSession | null>(null);
   const session = local ?? (stored === SERVER_SESSION ? null : stored);
   const [error, setError] = useState<string | null>(null);
+  const [submitting, setSubmitting] = useState(false);
 
   const stepIndex = session?.stepIndex ?? 0;
   const draft = session?.draft ?? SERVER_SESSION.draft;
@@ -120,6 +122,11 @@ export function GuidedForm() {
   }, [session]);
 
   const ready = session !== null;
+
+  useEffect(() => {
+    if (!ready || !step) return;
+    void logFormEvent("step_view", step.id).catch(() => {});
+  }, [ready, step]);
 
   useEffect(() => {
     if (!ready) return;
@@ -176,16 +183,32 @@ export function GuidedForm() {
     edit((current) => ({ ...current, stepIndex: Math.max(0, current.stepIndex - 1) }));
   }
 
-  function goNext() {
+  async function goNext() {
     if (!session || !canContinue) {
       setError("Completá este paso para continuar.");
+      void logFormEvent("validation_error", step.id).catch(() => {});
       return;
     }
+    saveCompany(session.draft.company);
+    saveProject(session.draft.project);
+    const draft = loadDraft();
     if (isLast) {
-      saveCompany(session.draft.company);
-      saveProject(session.draft.project);
-      sessionStorage.removeItem(GUIDED_STEP_STORAGE_KEY);
-      router.push("/post-envio?enviado=1");
+      setSubmitting(true);
+      try {
+        await submitFormTest(draft);
+        sessionStorage.removeItem(GUIDED_STEP_STORAGE_KEY);
+        router.push("/post-envio?enviado=1");
+      } catch (cause) {
+        setError(cause instanceof Error ? cause.message : "No se pudo guardar el envío.");
+        setSubmitting(false);
+      }
+      return;
+    }
+    try {
+      await saveFormCheckpoint(draft, step.id, "step_complete");
+      await logFormEvent("step_complete", step.id);
+    } catch (cause) {
+      setError(cause instanceof Error ? cause.message : "No se pudo guardar este paso.");
       return;
     }
     edit((current) => ({ ...current, stepIndex: current.stepIndex + 1 }));
@@ -257,8 +280,8 @@ export function GuidedForm() {
               ← Atrás
             </button>
           )}
-          <GradientButton type="submit" disabled={!canContinue}>
-            {continueLabel}
+          <GradientButton type="submit" disabled={!canContinue || submitting}>
+            {submitting ? "Publicando…" : continueLabel}
           </GradientButton>
         </div>
       </div>

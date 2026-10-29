@@ -45,13 +45,16 @@ export async function getAuthUser(): Promise<AuthUserSummary | null> {
     return null;
   }
   const meta = user.user_metadata as Record<string, unknown>;
+  const isAnonymous = Boolean(user.is_anonymous) || !user.email;
   return {
     id: user.id,
     email: user.email ?? "",
-    fullName:
-      (typeof meta.full_name === "string" && meta.full_name) ||
-      (typeof meta.name === "string" && meta.name) ||
-      null,
+    fullName: isAnonymous
+      ? "Invitado"
+      : (typeof meta.full_name === "string" && meta.full_name) ||
+        (typeof meta.name === "string" && meta.name) ||
+        null,
     avatarUrl: typeof meta.avatar_url === "string" ? meta.avatar_url : null,
+    isAnonymous,
   };
 }
