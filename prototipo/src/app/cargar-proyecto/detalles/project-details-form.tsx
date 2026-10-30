@@ -14,6 +14,7 @@ import {
   verticals,
 } from "@/lib/form-options";
 import { loadDraft, saveProject, type ProjectFormData } from "@/lib/form-storage";
+import { logFormEvent, submitFormTest } from "@/lib/research-persistence";
 
 const TITLE_MAX = 100;
 const PROBLEM_MAX = 512;
@@ -23,6 +24,7 @@ export function ProjectDetailsForm() {
   const router = useRouter();
   const [form, setForm] = useState<ProjectFormData>(() => loadDraft().project);
   const [error, setError] = useState<string | null>(null);
+  const [submitting, setSubmitting] = useState(false);
 
   useEffect(() => {
     const draft = loadDraft();
@@ -31,13 +33,14 @@ export function ProjectDetailsForm() {
       return;
     }
     setForm(draft.project);
+    void logFormEvent("screen_view", "detalles", { screen: "detalles" }).catch(() => {});
   }, [router]);
 
   function update<K extends keyof ProjectFormData>(key: K, value: ProjectFormData[K]) {
     setForm((prev) => ({ ...prev, [key]: value }));
   }
 
-  function onSubmit(e: FormEvent) {
+  async function onSubmit(e: FormEvent) {
     e.preventDefault();
     if (
       !form.title.trim() ||
@@ -50,11 +53,19 @@ export function ProjectDetailsForm() {
       !form.impact
     ) {
       setError("Completá todos los campos obligatorios.");
+      void logFormEvent("validation_error", "detalles", { screen: "detalles" }).catch(() => {});
       return;
     }
     setError(null);
+    setSubmitting(true);
     saveProject(form);
-    router.push("/post-envio?enviado=1");
+    try {
+      await submitFormTest(loadDraft());
+      router.push("/post-envio?enviado=1");
+    } catch (cause) {
+      setError(cause instanceof Error ? cause.message : "No se pudo guardar el envío.");
+      setSubmitting(false);
+    }
   }
 
   return (
@@ -62,8 +73,9 @@ export function ProjectDetailsForm() {
       <FormCard
         backHref="/cargar-proyecto/compania"
         backIconOnly
-        continueLabel="Publicar Proyecto"
+        continueLabel={submitting ? "Publicando…" : "Publicar Proyecto"}
         continueType="submit"
+        continueDisabled={submitting}
       >
         <h1 className="section-heading">
           <span className="section-icon" aria-hidden>

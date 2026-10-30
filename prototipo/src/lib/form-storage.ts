@@ -25,7 +25,8 @@ export type ProjectDraft = {
   project: ProjectFormData;
 };
 
-const STORAGE_KEY = "nocountry-project-draft";
+export const DRAFT_STORAGE_KEY = "nocountry-project-draft";
+const STORAGE_KEY = DRAFT_STORAGE_KEY;
 
 const emptyCompany = (): CompanyFormData => ({
   companyName: "",

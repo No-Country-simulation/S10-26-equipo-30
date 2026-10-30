@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
+import { Suspense } from "react";
 import { SiteHeader } from "@/components/site-header";
+import { SiteHeaderFallback } from "@/components/site-header-fallback";
 import { WhatsAppFab } from "@/components/whatsapp-fab";
 import "./globals.css";
 
@@ -27,7 +29,9 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
       className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
     >
       <body className="flex min-h-full flex-col">
-        <SiteHeader />
+        <Suspense fallback={<SiteHeaderFallback />}>
+          <SiteHeader />
+        </Suspense>
         {children}
         <WhatsAppFab />
       </body>

@@ -1,0 +1,16 @@
+# Supabase CLI — https://supabase.com/docs/guides/cli/config
+# Tras `supabase link`, db push aplica supabase/migrations/
+
+project_id = "uxflow-research"
+
+[db]
+major_version = 15
+
+[auth]
+enabled = true
+site_url = "http://localhost:3000"
+additional_redirect_urls = ["http://localhost:3000/**"]
+
+[auth.external.google]
+enabled = false
+# Habilitar en Dashboard y completar client_id / secret cuando integren Google.
