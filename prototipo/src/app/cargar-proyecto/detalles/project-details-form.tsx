@@ -16,7 +16,9 @@ import {
 import { loadDraft, saveProject, type ProjectFormData } from "@/lib/form-storage";
 import {
   answerClassicQuestion,
+  isAuthRequired,
   logFormEvent,
+  restartAfterLogin,
   submitFormTest,
   touchFormActivity,
   viewClassicQuestion,
@@ -70,6 +72,10 @@ export function ProjectDetailsForm() {
       await submitFormTest(loadDraft());
       router.push("/post-envio?enviado=1");
     } catch (cause) {
+      if (isAuthRequired(cause)) {
+        restartAfterLogin();
+        return;
+      }
       setError(cause instanceof Error ? cause.message : "No se pudo guardar el envío.");
       setSubmitting(false);
     }

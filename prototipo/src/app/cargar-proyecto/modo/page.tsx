@@ -3,7 +3,7 @@ import { FlowModeChoices } from "./flow-mode-choices";
 
 export default function ElegirModoFormularioPage() {
   return (
-    <main className="page-shell page-shell--wide">
+    <main className="page-shell page-shell--wide flow-mode-page">
       <FormCard backHref="/cargar-proyecto" hideContinue>
         <header className="flow-mode-header">
           <p className="flow-mode-eyebrow">Antes de empezar</p>

@@ -40,11 +40,44 @@ function toError(error: SupabaseError): Error {
   return new Error(error.message);
 }
 
+/** No hay sesión de Supabase: la UI debe llevar al login en vez de mostrar el mensaje. */
+export class AuthRequiredError extends Error {
+  constructor() {
+    super("Tenés que iniciar sesión para guardar el test.");
+    this.name = "AuthRequiredError";
+  }
+}
+
+export function isAuthRequired(error: unknown): error is AuthRequiredError {
+  return error instanceof AuthRequiredError;
+}
+
+/** Navegación completa: el middleware revisa la sesión y no queda estado viejo en memoria. */
+export function redirectToLogin(nextPath: string) {
+  window.location.assign(`/login?next=${encodeURIComponent(nextPath)}`);
+}
+
+/**
+ * Se perdió la sesión a mitad del formulario: se olvida el test viejo y, tras el login,
+ * se vuelve a elegir el modo para abrir un test nuevo (el borrador del formulario se conserva).
+ */
+export function restartAfterLogin() {
+  clearResearchSession();
+  redirectToLogin("/cargar-proyecto/modo");
+}
+
+/** Olvida las sesiones de test del usuario anterior (pertenecen a otra cuenta). */
+export function clearResearchSession() {
+  sessionStorage.removeItem(FORM_SESSION_KEY);
+  sessionStorage.removeItem(DASHBOARD_SESSION_KEY);
+  sessionStorage.removeItem(LAST_STEP_KEY);
+}
+
 async function requireUser() {
   const supabase = createClient();
   const { data, error } = await supabase.auth.getUser();
   if (error || !data.user) {
-    throw new Error("Tenés que iniciar sesión para guardar el test.");
+    throw new AuthRequiredError();
   }
   const guest = Boolean(data.user.is_anonymous) || !data.user.email;
   return { supabase, userId: data.user.id, guest };

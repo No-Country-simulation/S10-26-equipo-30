@@ -17,6 +17,7 @@ export function SimulationDashboard({ data }: SimulationDashboardProps) {
     data.verticals[0] ?? "Filtrar por vertical…",
   );
   const [featured, setFeatured] = useState<Set<string>>(() => new Set());
+  const [detailsOpen, setDetailsOpen] = useState(false);
 
   const filteredTeams = useMemo(() => {
     return data.teams.filter((team) => {
@@ -52,7 +53,21 @@ export function SimulationDashboard({ data }: SimulationDashboardProps) {
 
   return (
     <div className="sim-layout">
-      <aside className="sim-sidebar" aria-label="Resumen de simulación">
+      <button
+        type="button"
+        className="sim-details-toggle"
+        aria-expanded={detailsOpen}
+        onClick={() => setDetailsOpen((open) => !open)}
+      >
+        Detalles de la simulación
+        <span className={detailsOpen ? "sim-details-chevron is-open" : "sim-details-chevron"} aria-hidden>
+          ▾
+        </span>
+      </button>
+      <aside
+        className={detailsOpen ? "sim-sidebar is-open" : "sim-sidebar"}
+        aria-label="Resumen de simulación"
+      >
         <h1 className="sim-sidebar-title">
           {data.title} {data.edition}
         </h1>
@@ -103,6 +118,7 @@ export function SimulationDashboard({ data }: SimulationDashboardProps) {
             className={mainTab === "active" ? "sim-segment-btn is-active" : "sim-segment-btn"}
             onClick={() => setMainTab("active")}
           >
+            <SegmentIcon name="teams" />
             Equipos activos
           </button>
           <button
@@ -112,6 +128,7 @@ export function SimulationDashboard({ data }: SimulationDashboardProps) {
             disabled
             title="Próximamente"
           >
+            <SegmentIcon name="history" />
             Historial
           </button>
           <button
@@ -121,6 +138,7 @@ export function SimulationDashboard({ data }: SimulationDashboardProps) {
             disabled
             title="Próximamente"
           >
+            <SegmentIcon name="context" />
             Contexto
           </button>
         </div>
@@ -223,9 +241,11 @@ function TeamRow({
       <span className="sim-team-project">{team.project}</span>
       <span className="sim-team-vertical">{team.vertical}</span>
       <MetricCell icon="👥" value={team.members} label="Miembros" />
-      <MetricCell icon="💬" value={team.messages} label="Mensajes" />
-      <MetricCell icon="📹" value={team.meetings} label="Reuniones" />
-      <MetricCell icon="📄" value={team.deliverables} label="Entregables" />
+      <span className="sim-team-metrics">
+        <MetricCell icon="💬" value={team.messages} label="Mensajes" />
+        <MetricCell icon="📹" value={team.meetings} label="Reuniones" />
+        <MetricCell icon="📄" value={team.deliverables} label="Entregables" />
+      </span>
       <button
         type="button"
         className={featured ? "sim-fav is-active" : "sim-fav"}
@@ -236,6 +256,40 @@ function TeamRow({
         {team.locked ? "🔒" : featured ? "♥" : "♡"}
       </button>
     </li>
+  );
+}
+
+function SegmentIcon({ name }: { name: "teams" | "history" | "context" }) {
+  const common = {
+    viewBox: "0 0 24 24",
+    fill: "none",
+    stroke: "currentColor",
+    strokeWidth: 1.8,
+    className: "sim-segment-icon",
+    "aria-hidden": true as const,
+  };
+  if (name === "teams") {
+    return (
+      <svg {...common}>
+        <circle cx="9" cy="8" r="3" />
+        <path d="M3.5 19a5.5 5.5 0 0 1 11 0" />
+        <circle cx="17" cy="9" r="2.2" />
+        <path d="M16 19a4.2 4.2 0 0 1 5-3.6" />
+      </svg>
+    );
+  }
+  if (name === "history") {
+    return (
+      <svg {...common}>
+        <rect x="6" y="10" width="12" height="9" rx="1.5" />
+        <path d="M9 10V8a3 3 0 0 1 6 0v2" />
+      </svg>
+    );
+  }
+  return (
+    <svg {...common}>
+      <path d="M13 3 6 13h5l-1 8 8-12h-5l0-6z" />
+    </svg>
   );
 }
 

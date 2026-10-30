@@ -1,9 +1,9 @@
 "use client";
 
 import Link from "next/link";
-import { useRouter } from "next/navigation";
 import type { AuthUserSummary } from "@/lib/supabase/types";
 import { createClient } from "@/lib/supabase/client";
+import { clearResearchSession } from "@/lib/research-persistence";
 
 type AuthControlsProps = {
   user: AuthUserSummary | null;
@@ -11,8 +11,6 @@ type AuthControlsProps = {
 };
 
 export function AuthControls({ user, supabaseEnabled }: AuthControlsProps) {
-  const router = useRouter();
-
   if (!supabaseEnabled) {
     return (
       <span className="auth-pill auth-pill--muted" title="Configurá Supabase en .env.local">
@@ -36,8 +34,9 @@ export function AuthControls({ user, supabaseEnabled }: AuthControlsProps) {
   async function signOut() {
     const supabase = createClient();
     await supabase.auth.signOut();
-    router.refresh();
-    router.push("/");
+    clearResearchSession();
+    // Recarga completa: Next deja montadas las páginas anteriores y seguirían creyendo que hay sesión.
+    window.location.assign("/");
   }
 
   return (
