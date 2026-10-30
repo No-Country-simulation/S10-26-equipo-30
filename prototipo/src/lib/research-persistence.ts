@@ -6,6 +6,8 @@ import { guidedSteps } from "@/lib/guided-steps";
 
 export type FormFlowVariant = "classic" | "guided";
 
+export type ExperienceRating = "sencilla" | "neutra" | "frustrante";
+
 const FORM_SESSION_KEY = "nocountry-form-session-id";
 const DASHBOARD_SESSION_KEY = "nocountry-dashboard-session-id";
 const LAST_STEP_KEY = "nocountry-form-last-step";
@@ -36,6 +38,11 @@ function toError(error: SupabaseError): Error {
   }
   if (error.code === "42501") {
     return new Error("No tenés permiso para guardar esta sesión. Volvé a iniciar sesión.");
+  }
+  if (error.code === "PGRST205") {
+    return new Error(
+      "El comentario todavía no está habilitado en la base. El proyecto igual quedó publicado.",
+    );
   }
   return new Error(error.message);
 }
@@ -327,6 +334,52 @@ export async function submitFormTest(draft: ProjectDraft) {
     payload: {},
   });
   sessionStorage.removeItem(LAST_STEP_KEY);
+}
+
+/** Opinión posterior al envío. No registra un evento: queda fuera del análisis del formulario. */
+export async function loadExperienceFeedback(): Promise<{
+  rating: ExperienceRating;
+  comment: string;
+} | null> {
+  const sessionId = formSessionId();
+  if (!sessionId) return null;
+
+  const { supabase } = await requireUser();
+  const { data, error } = await supabase
+    .from("session_experience_feedback")
+    .select("rating, comment")
+    .eq("session_id", sessionId)
+    .maybeSingle();
+
+  if (error) throw toError(error);
+  if (!data) return null;
+  const rating = data.rating;
+  if (rating !== "sencilla" && rating !== "neutra" && rating !== "frustrante") return null;
+  return { rating, comment: typeof data.comment === "string" ? data.comment : "" };
+}
+
+export function hasFormSession() {
+  return Boolean(formSessionId());
+}
+
+export async function saveExperienceFeedback(rating: ExperienceRating, comment: string) {
+  const sessionId = formSessionId();
+  if (!sessionId) {
+    throw new Error("No encontramos la sesión de este envío. El proyecto igual quedó publicado.");
+  }
+
+  const { supabase } = await requireUser();
+  const trimmed = comment.trim();
+  const { error } = await supabase.from("session_experience_feedback").insert({
+    session_id: sessionId,
+    rating,
+    comment: trimmed ? trimmed.slice(0, 2000) : null,
+  });
+
+  if (error?.code === "23505") {
+    throw new Error("Ya registramos tu comentario para este envío.");
+  }
+  if (error) throw toError(error);
 }
 
 let dashboardStart: Promise<void> | null = null;

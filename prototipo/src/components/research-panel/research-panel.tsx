@@ -9,6 +9,7 @@ import {
   formatWhen,
   labelEvent,
   labelEventStep,
+  labelExperience,
   labelFlowPiece,
   labelRole,
   labelSnapshotReason,
@@ -26,6 +27,7 @@ type TableId =
   | "personas"
   | "sesiones"
   | "envios"
+  | "experiencia"
   | "borradores"
   | "actividad"
   | "notas"
@@ -53,6 +55,7 @@ const tabs: { id: TableId; label: string }[] = [
   { id: "resumen", label: "Resumen" },
   { id: "sesiones", label: "Pruebas" },
   { id: "envios", label: "Proyectos enviados" },
+  { id: "experiencia", label: "Experiencia" },
   { id: "actividad", label: "Qué hizo cada persona" },
   { id: "borradores", label: "Borradores" },
   { id: "personas", label: "Personas" },
@@ -78,6 +81,7 @@ export function ResearchPanel() {
   const [events, setEvents] = useState<Row[]>([]);
   const [notes, setNotes] = useState<Row[]>([]);
   const [invites, setInvites] = useState<Row[]>([]);
+  const [feedback, setFeedback] = useState<Row[]>([]);
   const [focusEvents, setFocusEvents] = useState<Row[] | null>(null);
 
   useEffect(() => {
@@ -96,7 +100,7 @@ export function ResearchPanel() {
         return;
       }
 
-      const [profileRes, sessionRes, submissionRes, draftRes, eventRes, noteRes, inviteRes] =
+      const [profileRes, sessionRes, submissionRes, draftRes, eventRes, noteRes, inviteRes, feedbackRes] =
         await Promise.all([
           supabase.from("profiles").select("*").order("created_at", { ascending: false }),
           supabase.from("test_sessions").select("*").order("started_at", { ascending: false }),
@@ -105,6 +109,10 @@ export function ResearchPanel() {
           supabase.from("session_events").select("*").order("created_at", { ascending: false }).limit(500),
           supabase.from("moderation_notes").select("*").order("created_at", { ascending: false }),
           supabase.from("tester_invites").select("*").order("created_at", { ascending: false }),
+          supabase
+            .from("session_experience_feedback")
+            .select("*")
+            .order("created_at", { ascending: false }),
         ]);
 
       if (cancelled) return;
@@ -127,6 +135,7 @@ export function ResearchPanel() {
       setEvents((eventRes.data ?? []) as Row[]);
       setNotes((noteRes.error ? [] : (noteRes.data ?? [])) as Row[]);
       setInvites((inviteRes.error ? [] : (inviteRes.data ?? [])) as Row[]);
+      setFeedback((feedbackRes.error ? [] : (feedbackRes.data ?? [])) as Row[]);
       setLoading(false);
     }
 
@@ -181,7 +190,7 @@ export function ResearchPanel() {
 
   const scope = useMemo(() => {
     if (personId === "all") {
-      return { profiles, sessions, submissions, drafts, events, notes };
+      return { profiles, sessions, submissions, drafts, events, notes, feedback };
     }
     const scopedSessions = sessions.filter((session) => String(session.user_id ?? "") === personId);
     const sessionIds = new Set(scopedSessions.map((session) => String(session.id)));
@@ -192,8 +201,9 @@ export function ResearchPanel() {
       drafts: drafts.filter((row) => sessionIds.has(String(row.session_id ?? ""))),
       events: events.filter((row) => sessionIds.has(String(row.session_id ?? ""))),
       notes: notes.filter((row) => String(row.author_id ?? "") === personId),
+      feedback: feedback.filter((row) => sessionIds.has(String(row.session_id ?? ""))),
     };
-  }, [drafts, events, notes, personId, profiles, sessions, submissions]);
+  }, [drafts, events, feedback, notes, personId, profiles, sessions, submissions]);
 
   const tables = useMemo<TableView[]>(() => {
     const source = scope;
@@ -206,7 +216,7 @@ export function ResearchPanel() {
       insight?.id === "sesiones"
         ? source.sessions.filter((session) => matchesSession(session, insight))
         : source.sessions;
-    const { submissions, drafts, notes } = source;
+    const { submissions, drafts, notes, feedback } = source;
     const events = focusSessionId ? (focusEvents ?? []) : source.events;
     return [
       {
@@ -292,6 +302,24 @@ export function ResearchPanel() {
             textField(project, "title"),
             textField(project, "problem"),
             labelVariant(typeof session?.flow_variant === "string" ? session.flow_variant : null),
+          ];
+        }),
+      },
+      {
+        id: "experiencia",
+        title: "Experiencia al publicar",
+        description:
+          "Lo que dijeron después de publicar. No entra en el resumen ni en el recorrido: el formulario ya había terminado. Cada fila corresponde a una sesión y a su tipo de formulario.",
+        columns: ["Persona", "Tipo de formulario", "Experiencia", "Comentario", "Cuándo"],
+        rows: feedback.map((row) => {
+          const session = sessionById.get(String(row.session_id ?? ""));
+          const text = typeof row.comment === "string" ? row.comment.trim() : "";
+          return [
+            personForSession(row.session_id),
+            labelVariant(typeof session?.flow_variant === "string" ? session.flow_variant : null),
+            labelExperience(typeof row.rating === "string" ? row.rating : null),
+            text || "—",
+            formatWhen(typeof row.created_at === "string" ? row.created_at : null),
           ];
         }),
       },
