@@ -1,9 +1,10 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
+import { createClient } from "@/lib/supabase/client";
+import { asRecord, textField } from "@/lib/research-labels";
 import {
-  myProjects,
   projectStatusLabel,
   type MyProject,
   type ProjectPlan,
@@ -18,22 +19,124 @@ export function MyProjectsView() {
   const [planFilter, setPlanFilter] = useState<PlanFilter>("all");
   const [quickFilter, setQuickFilter] = useState<QuickFilter>("all");
   const [expandedId, setExpandedId] = useState<string | null>(null);
+  const [projects, setProjects] = useState<MyProject[]>([]);
+  const [fullView, setFullView] = useState(false);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
-  const total = myProjects.length;
-  const activeCount = myProjects.filter((project) => project.status === "active").length;
+  useEffect(() => {
+    let cancelled = false;
+
+    async function load() {
+      setLoading(true);
+      setError(null);
+      const supabase = createClient();
+      const { data: authData, error: authError } = await supabase.auth.getUser();
+      if (authError || !authData.user) {
+        if (!cancelled) {
+          setError("Tenés que iniciar sesión para ver los proyectos.");
+          setLoading(false);
+        }
+        return;
+      }
+
+      const [submissionRes, sessionRes, profileRes] = await Promise.all([
+        supabase
+          .from("project_submissions")
+          .select("id, session_id, company, project")
+          .order("submitted_at", { ascending: false }),
+        supabase.from("test_sessions").select("id, user_id"),
+        supabase.from("profiles").select("id, full_name, email, role"),
+      ]);
+
+      if (cancelled) return;
+      const firstError = [submissionRes, sessionRes, profileRes].find((result) => result.error);
+      if (firstError?.error) {
+        setError(firstError.error.message);
+        setLoading(false);
+        return;
+      }
+
+      const profiles = (profileRes.data ?? []) as {
+        id: string;
+        full_name: string | null;
+        email: string | null;
+        role: string;
+      }[];
+      const me = profiles.find((person) => person.id === authData.user.id);
+      const seesEveryone = me?.role === "researcher" || me?.role === "admin";
+      const ownerBySession = new Map(
+        ((sessionRes.data ?? []) as { id: string; user_id: string }[]).map((session) => [
+          session.id,
+          session.user_id,
+        ]),
+      );
+      const nameByUser = new Map(
+        profiles.map((person) => [
+          person.id,
+          person.full_name?.trim() || person.email?.trim() || "Invitado",
+        ]),
+      );
+
+      const loaded = ((submissionRes.data ?? []) as {
+        id: string;
+        session_id: string;
+        company: unknown;
+        project: unknown;
+      }[]).map((row) => {
+        const project = asRecord(row.project);
+        const company = asRecord(row.company);
+        const ownerId = ownerBySession.get(row.session_id) ?? "";
+        const vertical = textField(project, "vertical");
+        const title = textField(project, "title");
+        const companyName = textField(company, "companyName");
+        return {
+          id: row.id,
+          title: title !== "—" ? title : companyName !== "—" ? companyName : "Sin título",
+          description:
+            textField(project, "problem") !== "—"
+              ? textField(project, "problem")
+              : textField(project, "challengeDescription") !== "—"
+                ? textField(project, "challengeDescription")
+                : "Sin descripción",
+          status: "pending" as const,
+          plan: "free" as const,
+          sectors: stringList(project.sectors),
+          verticals: vertical === "—" ? [] : [vertical],
+          skills: stringList(project.tools),
+          author: seesEveryone ? (nameByUser.get(ownerId) ?? "Invitado") : null,
+          own: ownerId === authData.user.id,
+          sessionId: row.session_id,
+        };
+      });
+
+      setFullView(seesEveryone);
+      setProjects(loaded);
+      setLoading(false);
+    }
+
+    void load();
+    return () => {
+      cancelled = true;
+    };
+  }, []);
+
+  const total = projects.length;
+  const activeCount = projects.filter((project) => project.status === "active").length;
 
   const visible = useMemo(() => {
     const q = query.trim().toLowerCase();
-    return myProjects.filter((project) => {
+    return projects.filter((project) => {
       if (planFilter !== "all" && project.plan !== planFilter) return false;
       if (quickFilter !== "all" && project.status !== quickFilter) return false;
       if (!q) return true;
       return (
         project.title.toLowerCase().includes(q) ||
-        project.description.toLowerCase().includes(q)
+        project.description.toLowerCase().includes(q) ||
+        (project.author?.toLowerCase().includes(q) ?? false)
       );
     });
-  }, [query, planFilter, quickFilter]);
+  }, [projects, query, planFilter, quickFilter]);
 
   return (
     <div className="mp-view">
@@ -83,8 +186,20 @@ export function MyProjectsView() {
         </div>
       </section>
 
-      {visible.length === 0 ? (
-        <p className="mp-empty">No hay proyectos con esos filtros.</p>
+      {fullView ? (
+        <p className="mp-scope">Proyectos cargados por todas las personas.</p>
+      ) : null}
+
+      {loading ? (
+        <p className="mp-empty">Cargando proyectos…</p>
+      ) : error ? (
+        <p className="form-error">{error}</p>
+      ) : visible.length === 0 ? (
+        <p className="mp-empty">
+          {projects.length === 0
+            ? "Todavía no hay proyectos cargados."
+            : "No hay proyectos con esos filtros."}
+        </p>
       ) : (
         <ul className="mp-grid">
           {visible.map((project) => (
@@ -92,6 +207,7 @@ export function MyProjectsView() {
               key={project.id}
               project={project}
               expanded={expandedId === project.id}
+              trailHref={fullView ? `/panel?sesion=${project.sessionId}` : null}
               onToggle={() =>
                 setExpandedId((current) => (current === project.id ? null : project.id))
               }
@@ -129,16 +245,21 @@ function PlanButton({
 function ProjectCard({
   project,
   expanded,
+  trailHref,
   onToggle,
 }: {
   project: MyProject;
   expanded: boolean;
+  trailHref: string | null;
   onToggle: () => void;
 }) {
   return (
     <li className="mp-card">
       <div className="mp-card-head">
-        <h2 className="mp-card-title">{project.title}</h2>
+        <div>
+          <h2 className="mp-card-title">{project.title}</h2>
+          {project.author ? <p className="mp-card-author">Cargado por {project.author}</p> : null}
+        </div>
         <span className={`mp-status mp-status--${project.status}`}>
           {projectStatusLabel[project.status]}
         </span>
@@ -151,15 +272,30 @@ function ProjectCard({
         <ChipGroup label="Skills:" chips={project.skills} tone="skill" />
       ) : null}
       <div className="mp-card-footer">
-        <button type="button" className="mp-more" onClick={onToggle}>
-          {expanded ? "Ver menos" : "Ver más"}
-        </button>
-        <Link href="/cargar-proyecto" className="mp-edit">
-          <span aria-hidden>✎</span> Editar
-        </Link>
+        {trailHref ? (
+          <Link href={trailHref} className="mp-more">
+            Ver más
+          </Link>
+        ) : (
+          <button type="button" className="mp-more" onClick={onToggle}>
+            {expanded ? "Ver menos" : "Ver más"}
+          </button>
+        )}
+        {project.own ? (
+          <Link href="/cargar-proyecto" className="mp-edit">
+            <span aria-hidden>✎</span> Editar
+          </Link>
+        ) : (
+          <span />
+        )}
       </div>
     </li>
   );
+}
+
+function stringList(value: unknown) {
+  if (!Array.isArray(value)) return [];
+  return value.filter((item): item is string => typeof item === "string" && item.trim().length > 0);
 }
 
 function ChipGroup({

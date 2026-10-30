@@ -83,7 +83,7 @@ export function SuccessView() {
         </div>
 
         <div className="success-footer">
-          <GradientButton href="/">Ver Mis Proyectos</GradientButton>
+          <GradientButton href="/mis-proyectos">Ver Mis Proyectos</GradientButton>
         </div>
       </div>
     </>

@@ -189,6 +189,13 @@ a {
   background: rgba(148, 163, 184, 0.12);
 }
 
+.auth-panel-link {
+  font-size: 0.75rem;
+  font-weight: 650;
+  color: var(--nc-accent-cyan);
+  padding: 0.2rem 0.4rem;
+}
+
 .auth-pill {
   font-size: 0.7rem;
   padding: 0.2rem 0.5rem;
@@ -344,14 +351,43 @@ a {
   transform: none;
 }
 
-/* Landing — una sola pantalla (form-01), sin scroll vertical */
-body:has(.landing-shell) {
+.gradient-btn.is-busy:disabled {
+  opacity: 1;
+  cursor: wait;
+}
+
+.loading-pin {
+  width: 0.9rem;
+  height: 0.9rem;
+  border: 2px solid rgba(34, 211, 238, 0.35);
+  border-top-color: #22d3ee;
+  border-radius: 999px;
+  display: inline-block;
+  flex: 0 0 auto;
+  animation: loading-pin-spin 0.7s linear infinite;
+}
+
+.gradient-btn .loading-pin {
+  border-color: rgba(255, 255, 255, 0.4);
+  border-top-color: #fff;
+}
+
+@keyframes loading-pin-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* Landing — una sola pantalla (form-01), sin scroll vertical.
+   Al cambiar de pestaña, Next deja la página anterior montada con display:none.
+   :has() igual la ve, así que el bloqueo solo vale si la portada está visible. */
+body:has(.landing-shell:not([style*="display: none"])) {
   overflow: hidden;
   height: 100dvh;
   max-height: 100dvh;
 }
 
-body:has(.landing-shell) .site-header {
+body:has(.landing-shell:not([style*="display: none"])) .site-header {
   flex-shrink: 0;
 }
 
@@ -443,16 +479,16 @@ body:has(.landing-shell) .site-header {
 }
 
 /* Formularios iniciales (form-03+) — tarjeta centrada, altura según contenido */
-body:has(.form-shell) {
+body:has(.form-shell:not([style*="display: none"])) {
   min-height: 100dvh;
 }
 
-body:has(.form-shell--scroll) {
+body:has(.form-shell--scroll:not([style*="display: none"])) {
   overflow-x: hidden;
   overflow-y: auto;
 }
 
-body:has(.form-shell) .site-header {
+body:has(.form-shell:not([style*="display: none"])) .site-header {
   flex-shrink: 0;
 }
 
@@ -1072,8 +1108,14 @@ button.flow-mode-card:disabled {
 
 .flow-mode-cta {
   margin-top: 0.35rem;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
   font-size: 0.88rem;
   font-weight: 600;
+}
+
+.flow-mode-cta > span {
   background: var(--nc-gradient);
   -webkit-background-clip: text;
   background-clip: text;
@@ -1872,6 +1914,17 @@ button.flow-mode-card:disabled {
   font-weight: 700;
 }
 
+.mp-card-author,
+.mp-scope {
+  margin: 0.25rem 0 0;
+  color: #94a3b8;
+  font-size: 0.8rem;
+}
+
+.mp-scope {
+  margin: 0 0 0.9rem;
+}
+
 .mp-status {
   flex: 0 0 auto;
   padding: 0.25rem 0.55rem;
@@ -1972,4 +2025,226 @@ button.flow-mode-card:disabled {
 .mp-empty {
   margin: 0;
   color: var(--nc-text-muted);
+}
+
+html:has(.rp-page:not([style*="display: none"])) {
+  height: auto;
+  min-height: 100%;
+}
+
+body:has(.rp-page:not([style*="display: none"])) {
+  overflow-y: auto;
+}
+
+.rp-page {
+  flex: 1 0 auto;
+  max-width: min(100%, 1180px);
+  margin: 0 auto;
+  padding: 1.25rem 1.25rem 3rem;
+  overflow: visible;
+}
+
+.rp-eyebrow {
+  margin: 0 0 0.25rem;
+  font-size: 0.75rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--nc-text-muted);
+}
+
+.rp-title {
+  margin: 0 0 0.5rem;
+  font-size: 1.7rem;
+}
+
+.rp-lead,
+.rp-muted,
+.rp-section-head p {
+  margin: 0;
+  color: var(--nc-text-muted);
+  line-height: 1.5;
+}
+
+.rp-filter {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  margin-top: 1rem;
+  color: var(--nc-text-muted);
+  font-size: 0.85rem;
+}
+
+.rp-filter select {
+  min-width: 14rem;
+  padding: 0.4rem 0.6rem;
+  border-radius: 0.5rem;
+  border: 1px solid var(--nc-border);
+  background: rgba(12, 18, 28, 0.9);
+  color: var(--nc-text);
+  font-size: 0.85rem;
+}
+
+.rp-tabs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+  margin: 1.25rem 0;
+}
+
+.rp-tab {
+  padding: 0.4rem 0.75rem;
+  border-radius: 9999px;
+  border: 1px solid var(--nc-border);
+  background: transparent;
+  color: var(--nc-text-muted);
+  cursor: pointer;
+  font-size: 0.82rem;
+}
+
+.rp-tab.is-active {
+  background: rgba(139, 92, 246, 0.25);
+  border-color: rgba(139, 92, 246, 0.5);
+  color: var(--nc-text);
+}
+
+.rp-cards {
+  list-style: none;
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 0.75rem;
+  margin: 0 0 1.25rem;
+  padding: 0;
+}
+
+@media (max-width: 800px) {
+  .rp-cards {
+    grid-template-columns: 1fr;
+  }
+}
+
+.rp-card {
+  display: flex;
+  padding: 0;
+  border-radius: 0.8rem;
+  border: 1px solid var(--nc-border);
+  background: rgba(12, 18, 28, 0.75);
+}
+
+.rp-card-button {
+  flex: 1 1 auto;
+  width: 100%;
+  margin: 0;
+  padding: 0.9rem 1rem;
+  border: 0;
+  border-radius: inherit;
+  background: transparent;
+  color: inherit;
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+
+.rp-insight {
+  padding: 0;
+  border: 0;
+  background: none;
+  color: inherit;
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+
+.rp-row-link {
+  cursor: pointer;
+}
+
+.rp-row-link:hover td,
+.rp-row-link:focus-visible td {
+  background: rgba(139, 92, 246, 0.12);
+}
+
+.rp-detail {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.6rem;
+  margin: 0.45rem 0 0;
+  color: var(--nc-text);
+}
+
+.rp-detail button {
+  padding: 0.2rem 0.55rem;
+  border-radius: 9999px;
+  border: 1px solid var(--nc-border);
+  background: transparent;
+  color: var(--nc-text-muted);
+  cursor: pointer;
+  font-size: 0.78rem;
+}
+
+.rp-card-value {
+  display: block;
+  font-size: 1.35rem;
+  font-weight: 700;
+}
+
+.rp-card-label {
+  color: var(--nc-text-muted);
+  font-size: 0.82rem;
+}
+
+.rp-compare,
+.rp-section {
+  margin-top: 1.25rem;
+  scroll-margin-top: 5.5rem;
+}
+
+.rp-compare h2,
+.rp-section h2 {
+  margin: 0 0 0.65rem;
+  font-size: 1.05rem;
+}
+
+.rp-section-head {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+  align-items: flex-start;
+  margin-bottom: 0.75rem;
+}
+
+.rp-download {
+  flex: 0 0 auto;
+  padding: 0.45rem 0.75rem;
+  border-radius: 0.5rem;
+  border: 1px solid rgba(34, 211, 238, 0.35);
+  background: transparent;
+  color: #67e8f9;
+  cursor: pointer;
+  font-size: 0.82rem;
+}
+
+.rp-table-wrap {
+  overflow-x: auto;
+}
+
+.rp-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.86rem;
+}
+
+.rp-table th,
+.rp-table td {
+  text-align: left;
+  padding: 0.55rem 0.65rem;
+  border-bottom: 1px solid var(--nc-border);
+  vertical-align: top;
+}
+
+.rp-table th {
+  color: #94a3b8;
+  font-size: 0.75rem;
+  font-weight: 650;
+  letter-spacing: 0.03em;
 }

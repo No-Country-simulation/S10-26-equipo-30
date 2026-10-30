@@ -11,6 +11,7 @@ type MultiSelectProps = {
   options: readonly string[];
   value: string[];
   onChange: (value: string[]) => void;
+  onOpen?: () => void;
   max: number;
   placeholder?: string;
 };
@@ -24,6 +25,7 @@ export function MultiSelect({
   options,
   value,
   onChange,
+  onOpen,
   max,
   placeholder = "Seleccionar…",
 }: MultiSelectProps) {
@@ -78,7 +80,12 @@ export function MultiSelect({
           type="button"
           id={id}
           className="multi-select-trigger"
-          onClick={() => setOpen((o) => !o)}
+          onClick={() =>
+            setOpen((current) => {
+              if (!current) onOpen?.();
+              return !current;
+            })
+          }
           aria-expanded={open}
           aria-haspopup="listbox"
           aria-label={hideLabel ? label : undefined}

@@ -27,7 +27,7 @@ import {
   type ProjectDraft,
   type ProjectFormData,
 } from "@/lib/form-storage";
-import { logFormEvent, saveFormCheckpoint, submitFormTest } from "@/lib/research-persistence";
+import { logFormEvent, saveFormCheckpoint, submitFormTest, touchFormActivity } from "@/lib/research-persistence";
 
 type GuidedSession = {
   draft: ProjectDraft;
@@ -184,6 +184,7 @@ export function GuidedForm() {
   }
 
   async function goNext() {
+    if (submitting) return;
     if (!session || !canContinue) {
       setError("Completá este paso para continuar.");
       void logFormEvent("validation_error", step.id).catch(() => {});
@@ -192,26 +193,23 @@ export function GuidedForm() {
     saveCompany(session.draft.company);
     saveProject(session.draft.project);
     const draft = loadDraft();
-    if (isLast) {
-      setSubmitting(true);
-      try {
+    setError(null);
+    setSubmitting(true);
+    try {
+      if (isLast) {
         await submitFormTest(draft);
         sessionStorage.removeItem(GUIDED_STEP_STORAGE_KEY);
         router.push("/post-envio?enviado=1");
-      } catch (cause) {
-        setError(cause instanceof Error ? cause.message : "No se pudo guardar el envío.");
-        setSubmitting(false);
+        return;
       }
-      return;
-    }
-    try {
       await saveFormCheckpoint(draft, step.id, "step_complete");
       await logFormEvent("step_complete", step.id);
+      edit((current) => ({ ...current, stepIndex: current.stepIndex + 1 }));
+      setSubmitting(false);
     } catch (cause) {
       setError(cause instanceof Error ? cause.message : "No se pudo guardar este paso.");
-      return;
+      setSubmitting(false);
     }
-    edit((current) => ({ ...current, stepIndex: current.stepIndex + 1 }));
   }
 
   function onSubmit(event: FormEvent) {
@@ -226,7 +224,7 @@ export function GuidedForm() {
   const continueLabel = isLast ? "Publicar Proyecto" : !step.required && !filled ? "Omitir" : "Continuar";
 
   return (
-    <form onSubmit={onSubmit}>
+    <form onSubmit={onSubmit} onChange={touchFormActivity}>
       <div className="form-card guided-card">
         <header className="guided-progress">
           <div className="guided-progress-top">
@@ -276,12 +274,12 @@ export function GuidedForm() {
               ← Atrás
             </Link>
           ) : (
-            <button type="button" className="form-back-link guided-back" onClick={goBack}>
+            <button type="button" className="form-back-link guided-back" onClick={goBack} disabled={submitting}>
               ← Atrás
             </button>
           )}
-          <GradientButton type="submit" disabled={!canContinue || submitting}>
-            {submitting ? "Publicando…" : continueLabel}
+          <GradientButton type="submit" disabled={!canContinue} busy={submitting}>
+            {submitting ? (isLast ? "Publicando…" : "Guardando…") : continueLabel}
           </GradientButton>
         </div>
       </div>

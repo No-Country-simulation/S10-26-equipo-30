@@ -4,8 +4,8 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 
 const navItems = [
-  { href: "/simulation", label: "Simulación Laboral" },
-  { href: "/", label: "Cargar Proyecto" },
+  { href: "/", label: "Simulación Laboral" },
+  { href: "/cargar-proyecto", label: "Cargar Proyecto" },
   { href: "/mis-proyectos", label: "Mis Proyectos" },
 ];
 
@@ -14,10 +14,10 @@ export function SiteNav() {
 
   function isActive(href: string) {
     if (href === "/") {
-      return pathname === "/" || pathname.startsWith("/cargar-proyecto");
+      return pathname === "/" || pathname === "/simulation" || pathname.startsWith("/simulation/");
     }
-    if (href === "/simulation") {
-      return pathname === "/simulation" || pathname.startsWith("/simulation/");
+    if (href === "/cargar-proyecto") {
+      return pathname === "/cargar-proyecto" || pathname.startsWith("/cargar-proyecto/");
     }
     if (href === "/mis-proyectos") {
       return pathname === "/mis-proyectos" || pathname.startsWith("/mis-proyectos/");

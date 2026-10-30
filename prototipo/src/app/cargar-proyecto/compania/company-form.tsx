@@ -6,7 +6,13 @@ import { FormCard } from "@/components/form-card";
 import { countries, dialCodeForCountry } from "@/lib/countries";
 import { organizationSizes, organizationTypes } from "@/lib/form-options";
 import { loadDraft, saveCompany, type CompanyFormData } from "@/lib/form-storage";
-import { logFormEvent, saveFormCheckpoint } from "@/lib/research-persistence";
+import {
+  answerClassicQuestion,
+  logFormEvent,
+  saveFormCheckpoint,
+  touchFormActivity,
+  viewClassicQuestion,
+} from "@/lib/research-persistence";
 
 export function CompanyForm() {
   const router = useRouter();
@@ -34,15 +40,16 @@ export function CompanyForm() {
 
   async function onSubmit(e: FormEvent) {
     e.preventDefault();
-    if (
-      !form.companyName.trim() ||
-      !form.organizationType ||
-      !form.organizationSize ||
-      !form.country ||
-      !form.phoneNumber.trim()
-    ) {
+    const missing = [
+      !form.companyName.trim() ? "company-name" : "",
+      !form.organizationType ? "organization-type" : "",
+      !form.organizationSize ? "organization-size" : "",
+      !form.country ? "country" : "",
+      !form.phoneNumber.trim() ? "phone" : "",
+    ].filter(Boolean);
+    if (missing.length > 0) {
       setError("Completá todos los campos obligatorios.");
-      void logFormEvent("validation_error", "compania", { screen: "compania" }).catch(() => {});
+      void logFormEvent("validation_error", missing[0], { missing }).catch(() => {});
       return;
     }
     setError(null);
@@ -60,13 +67,14 @@ export function CompanyForm() {
   }
 
   return (
-    <form onSubmit={onSubmit}>
+    <form onSubmit={onSubmit} onChange={touchFormActivity}>
       <FormCard
         backHref="/cargar-proyecto/modo"
         backIconOnly
         continueLabel={submitting ? "Guardando…" : "Continuar"}
         continueType="submit"
         continueDisabled={submitting}
+        continueBusy={submitting}
       >
         <h1 className="section-heading">
           <span className="section-icon" aria-hidden>
@@ -86,7 +94,9 @@ export function CompanyForm() {
               className="field-input"
               type="text"
               value={form.companyName}
+              onFocus={() => viewClassicQuestion("company-name")}
               onChange={(e) => update("companyName", e.target.value)}
+              onBlur={(e) => answerClassicQuestion("company-name", Boolean(e.target.value.trim()))}
               placeholder="Ej. InnovaSoft"
               required
             />
@@ -100,7 +110,11 @@ export function CompanyForm() {
               <select
                 className="field-select"
                 value={form.organizationType}
-                onChange={(e) => update("organizationType", e.target.value)}
+                onFocus={() => viewClassicQuestion("organization-type")}
+                onChange={(e) => {
+                  update("organizationType", e.target.value);
+                  answerClassicQuestion("organization-type", Boolean(e.target.value));
+                }}
                 required
               >
                 <option value="">Seleccionar…</option>
@@ -119,7 +133,11 @@ export function CompanyForm() {
               <select
                 className="field-select"
                 value={form.organizationSize}
-                onChange={(e) => update("organizationSize", e.target.value)}
+                onFocus={() => viewClassicQuestion("organization-size")}
+                onChange={(e) => {
+                  update("organizationSize", e.target.value);
+                  answerClassicQuestion("organization-size", Boolean(e.target.value));
+                }}
                 required
               >
                 <option value="">Seleccionar…</option>
@@ -139,7 +157,11 @@ export function CompanyForm() {
             <select
               className="field-select"
               value={form.country}
-              onChange={(e) => onCountryChange(e.target.value)}
+              onFocus={() => viewClassicQuestion("country")}
+              onChange={(e) => {
+                onCountryChange(e.target.value);
+                answerClassicQuestion("country", Boolean(e.target.value));
+              }}
               required
             >
               <option value="">Selecciona un país</option>
@@ -168,7 +190,9 @@ export function CompanyForm() {
                 type="tel"
                 inputMode="numeric"
                 value={form.phoneNumber}
+                onFocus={() => viewClassicQuestion("phone")}
                 onChange={(e) => update("phoneNumber", e.target.value)}
+                onBlur={(e) => answerClassicQuestion("phone", Boolean(e.target.value.trim()))}
                 placeholder="3751364441"
                 required
               />
