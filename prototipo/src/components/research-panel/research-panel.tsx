@@ -235,7 +235,7 @@ export function ResearchPanel() {
         id: "sesiones",
         title: "Pruebas",
         description:
-          "Cada vez que alguien recorrió una parte del flujo. Si pasan 10 minutos sin actividad, también al cerrar la pestaña, la prueba pasa a abandonada.",
+          "Cada vez que alguien empezó a cargar un proyecto, clásico o guiado. Si pasan 10 minutos sin actividad, también al cerrar la pestaña, la prueba pasa a abandonada.",
         columns: [
           "Persona",
           "Qué probó",
@@ -247,7 +247,11 @@ export function ResearchPanel() {
           "Dónde quedó",
           "Cuenta",
         ],
-        rows: sessions.map((session) => {
+        rows: sessions
+          .filter(
+            (session) => session.flow_variant === "classic" || session.flow_variant === "guided",
+          )
+          .map((session) => {
           const meta = asRecord(session.client_meta);
           const guest = meta.guest === true;
           const lastActivity =
