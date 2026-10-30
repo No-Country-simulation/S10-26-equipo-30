@@ -21,8 +21,6 @@ function safeNextPath(raw: string | null, origin: string): string {
 export async function GET(request: NextRequest) {
   const env = getSupabasePublicEnv();
   const origin = request.nextUrl.origin;
-  const fallback = `${origin}/cargar-proyecto`;
-
   if (!env) {
     return NextResponse.redirect(`${origin}/login?error=config`);
   }

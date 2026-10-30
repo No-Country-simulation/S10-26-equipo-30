@@ -25,7 +25,6 @@ Abrí [http://localhost:3000](http://localhost:3000).
 | Ruta | Pantalla | Referencia diseño |
 |------|----------|-------------------|
 | `/` | Dashboard público de simulación (métricas + equipos, datos demo) | ref. companies/simulation |
-| `/simulation` | Redirige a `/` | — |
 | `/mis-proyectos` | Mis proyectos (tarjetas, filtros, datos demo) | ref. companies/my-projects |
 | `/panel` | Panel de research en lenguaje claro | — |
 | `/cargar-proyecto` | Plan Free Trial | form-02 |
@@ -35,7 +34,7 @@ Abrí [http://localhost:3000](http://localhost:3000).
 | `/cargar-proyecto/guiado` | Mismo esquema, una pregunta por paso | — |
 | `/post-envio` | Confirmación de envío | form-05 |
 
-Los datos del formulario se guardan en `sessionStorage` y, con sesión de Google, también en Supabase: sesión de test, eventos por paso, borradores y envío final. **Login:** Google vía Supabase (`/login`); rutas `/cargar-proyecto/*` y `/post-envio` requieren sesión si hay variables Supabase configuradas.
+Los datos del formulario se guardan en `sessionStorage` y, con sesión (Google o invitado), también en Supabase: sesión de test, eventos por paso, borradores y envío final. **Login:** Google o invitado vía Supabase (`/login`). Las rutas `/cargar-proyecto/*`, `/post-envio`, `/mis-proyectos` y `/panel` las protege `src/proxy.ts` (redirige a `/login?next=…` si no hay sesión).
 
 Variables: copiar `.env.example` → `.env.local`. Setup Supabase: [`../supabase/SETUP.md`](../supabase/SETUP.md).
 

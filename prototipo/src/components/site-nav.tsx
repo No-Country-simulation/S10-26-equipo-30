@@ -14,7 +14,7 @@ export function SiteNav() {
 
   function isActive(href: string) {
     if (href === "/") {
-      return pathname === "/" || pathname === "/simulation" || pathname.startsWith("/simulation/");
+      return pathname === "/";
     }
     if (href === "/cargar-proyecto") {
       return pathname === "/cargar-proyecto" || pathname.startsWith("/cargar-proyecto/");

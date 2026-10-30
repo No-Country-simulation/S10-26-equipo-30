@@ -27,7 +27,14 @@ import {
   type ProjectDraft,
   type ProjectFormData,
 } from "@/lib/form-storage";
-import { logFormEvent, saveFormCheckpoint, submitFormTest, touchFormActivity } from "@/lib/research-persistence";
+import {
+  isAuthRequired,
+  logFormEvent,
+  restartAfterLogin,
+  saveFormCheckpoint,
+  submitFormTest,
+  touchFormActivity,
+} from "@/lib/research-persistence";
 
 type GuidedSession = {
   draft: ProjectDraft;
@@ -207,6 +214,10 @@ export function GuidedForm() {
       edit((current) => ({ ...current, stepIndex: current.stepIndex + 1 }));
       setSubmitting(false);
     } catch (cause) {
+      if (isAuthRequired(cause)) {
+        restartAfterLogin();
+        return;
+      }
       setError(cause instanceof Error ? cause.message : "No se pudo guardar este paso.");
       setSubmitting(false);
     }

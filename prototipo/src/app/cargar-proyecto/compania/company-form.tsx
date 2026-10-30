@@ -8,7 +8,9 @@ import { organizationSizes, organizationTypes } from "@/lib/form-options";
 import { loadDraft, saveCompany, type CompanyFormData } from "@/lib/form-storage";
 import {
   answerClassicQuestion,
+  isAuthRequired,
   logFormEvent,
+  restartAfterLogin,
   saveFormCheckpoint,
   touchFormActivity,
   viewClassicQuestion,
@@ -61,6 +63,10 @@ export function CompanyForm() {
       await logFormEvent("screen_complete", "compania", { screen: "compania" });
       router.push("/cargar-proyecto/detalles");
     } catch (cause) {
+      if (isAuthRequired(cause)) {
+        restartAfterLogin();
+        return;
+      }
       setError(cause instanceof Error ? cause.message : "No se pudo guardar este paso.");
       setSubmitting(false);
     }
