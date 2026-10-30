@@ -3,7 +3,7 @@ import { SuccessView } from "./success-view";
 
 export default function PostEnvioPage() {
   return (
-    <main className="page-shell page-shell--wide">
+    <main className="finish-page">
       <Suspense fallback={<div className="form-card">Cargando…</div>}>
         <SuccessView />
       </Suspense>

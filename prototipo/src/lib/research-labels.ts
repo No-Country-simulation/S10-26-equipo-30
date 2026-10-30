@@ -90,6 +90,17 @@ export function labelStatus(value: string | null | undefined) {
   return statuses[value] ?? value;
 }
 
+const experienceRatings: Record<string, string> = {
+  sencilla: "Sencilla",
+  neutra: "Neutra",
+  frustrante: "Frustrante",
+};
+
+export function labelExperience(value: string | null | undefined) {
+  if (!value) return "—";
+  return experienceRatings[value] ?? value;
+}
+
 export function labelRole(value: string | null | undefined) {
   if (!value) return "—";
   return roles[value] ?? value;
