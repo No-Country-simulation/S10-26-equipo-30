@@ -20,5 +20,9 @@ async function PanelGate() {
   if (!user) {
     redirect("/login?next=/panel");
   }
+  // El panel es solo para el equipo de research; los testers vuelven al inicio.
+  if (!user.isResearcher) {
+    redirect("/");
+  }
   return <ResearchPanel />;
 }

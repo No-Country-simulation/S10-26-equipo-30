@@ -1,3 +1,4 @@
+import Image from "next/image";
 import Link from "next/link";
 import { connection } from "next/server";
 import { AuthControls } from "@/components/auth-controls";
@@ -13,9 +14,15 @@ export async function SiteHeader() {
   return (
     <header className="site-header">
       <div className="site-header-inner">
-        <Link href="/" className="site-logo">
-          <span className="logo-no">No</span>
-          <span className="logo-country">Country</span>
+        <Link href="/" className="site-logo" aria-label="NoCountry">
+          <Image
+            src="/nocountry-logo.png"
+            alt="NoCountry"
+            width={1229}
+            height={207}
+            className="site-logo-img"
+            priority
+          />
         </Link>
         <SiteNav />
         <div className="site-header-actions">

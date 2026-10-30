@@ -16,10 +16,26 @@ const geistMono = Geist_Mono({
   subsets: ["latin"],
 });
 
+const title = "NoCountry · Cargar Proyecto";
+const description =
+  "Prototipo funcional del flujo de carga de proyectos para decisores en NoCountry.";
+
 export const metadata: Metadata = {
-  title: "NoCountry · Cargar Proyecto",
-  description:
-    "Prototipo funcional del flujo de carga de proyectos para decisores en NoCountry.",
+  title,
+  description,
+  // La imagen de la vista previa sale de src/app/opengraph-image.png.
+  openGraph: {
+    title,
+    description,
+    siteName: "NoCountry",
+    type: "website",
+    locale: "es_AR",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title,
+    description,
+  },
 };
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
