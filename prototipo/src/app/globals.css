@@ -74,23 +74,15 @@ a {
 }
 
 .site-logo {
-  font-size: 1.35rem;
-  font-weight: 700;
-  letter-spacing: -0.02em;
+  display: inline-flex;
+  align-items: center;
+  justify-self: start;
 }
 
-.logo-no {
-  background: linear-gradient(135deg, #f472b6, #ec4899);
-  -webkit-background-clip: text;
-  background-clip: text;
-  color: transparent;
-}
-
-.logo-country {
-  background: linear-gradient(135deg, #22d3ee, #6366f1);
-  -webkit-background-clip: text;
-  background-clip: text;
-  color: transparent;
+.site-logo-img {
+  display: block;
+  height: 1.5rem;
+  width: auto;
 }
 
 .site-nav {

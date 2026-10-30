@@ -1,7 +1,7 @@
 import { createServerClient } from "@supabase/ssr";
 import { cookies } from "next/headers";
 import { getSupabasePublicEnv } from "@/lib/supabase/env";
-import type { AuthUserSummary } from "@/lib/supabase/types";
+import type { AppRole, AuthUserSummary } from "@/lib/supabase/types";
 
 export type { AuthUserSummary };
 
@@ -48,9 +48,11 @@ export async function getAuthUser(): Promise<AuthUserSummary | null> {
   const isAnonymous = Boolean(user.is_anonymous) || !user.email;
   const { data: profile } = await supabase
     .from("profiles")
-    .select("full_name")
+    .select("full_name, role")
     .eq("id", user.id)
     .maybeSingle();
+  const role: AppRole =
+    profile?.role === "researcher" || profile?.role === "admin" ? profile.role : "tester";
   const profileName =
     typeof profile?.full_name === "string" && profile.full_name.trim()
       ? profile.full_name.trim()
@@ -64,5 +66,7 @@ export async function getAuthUser(): Promise<AuthUserSummary | null> {
     fullName: profileName || metaName || (isAnonymous ? "Invitado" : null),
     avatarUrl: typeof meta.avatar_url === "string" ? meta.avatar_url : null,
     isAnonymous,
+    role,
+    isResearcher: role === "researcher" || role === "admin",
   };
 }

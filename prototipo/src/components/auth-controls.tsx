@@ -52,9 +52,11 @@ export function AuthControls({ user, supabaseEnabled }: AuthControlsProps) {
       <span className="auth-user-label" title={user.isAnonymous ? "Sesión de invitado" : user.email}>
         {label}
       </span>
-      <Link href="/panel" className="auth-panel-link">
-        Panel
-      </Link>
+      {user.isResearcher ? (
+        <Link href="/panel" className="auth-panel-link">
+          Panel
+        </Link>
+      ) : null}
       <button type="button" className="auth-signout" onClick={() => void signOut()}>
         Salir
       </button>
