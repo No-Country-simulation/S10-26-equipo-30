@@ -2,7 +2,7 @@ import { createServerClient } from "@supabase/ssr";
 import { NextResponse, type NextRequest } from "next/server";
 import { getSupabasePublicEnv } from "@/lib/supabase/env";
 
-const PROTECTED_PREFIXES = ["/cargar-proyecto", "/post-envio", "/mis-proyectos"];
+const PROTECTED_PREFIXES = ["/cargar-proyecto", "/post-envio", "/mis-proyectos", "/panel"];
 
 function isProtectedPath(pathname: string) {
   return PROTECTED_PREFIXES.some(

@@ -1,8 +1,13 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import { startFormTestSession, type FormFlowVariant } from "@/lib/research-persistence";
+import { LoadingPin } from "@/components/loading-pin";
+import {
+  noteReturnedToMode,
+  startFormTestSession,
+  type FormFlowVariant,
+} from "@/lib/research-persistence";
 
 const flowOptions = [
   {
@@ -29,6 +34,10 @@ export function FlowModeChoices() {
   const router = useRouter();
   const [pending, setPending] = useState<FormFlowVariant | null>(null);
   const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    void noteReturnedToMode().catch(() => {});
+  }, []);
 
   async function start(variant: FormFlowVariant, href: string) {
     setPending(variant);
@@ -64,7 +73,8 @@ export function FlowModeChoices() {
               ))}
             </ul>
             <span className="flow-mode-cta">
-              {pending === option.id ? "Guardando sesión…" : "Iniciar este flujo →"}
+              {pending === option.id ? <LoadingPin /> : null}
+              <span>{pending === option.id ? "Guardando sesión…" : "Iniciar este flujo →"}</span>
             </span>
           </button>
         ))}

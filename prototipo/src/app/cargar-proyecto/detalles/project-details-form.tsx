@@ -14,7 +14,13 @@ import {
   verticals,
 } from "@/lib/form-options";
 import { loadDraft, saveProject, type ProjectFormData } from "@/lib/form-storage";
-import { logFormEvent, submitFormTest } from "@/lib/research-persistence";
+import {
+  answerClassicQuestion,
+  logFormEvent,
+  submitFormTest,
+  touchFormActivity,
+  viewClassicQuestion,
+} from "@/lib/research-persistence";
 
 const TITLE_MAX = 100;
 const PROBLEM_MAX = 512;
@@ -42,18 +48,19 @@ export function ProjectDetailsForm() {
 
   async function onSubmit(e: FormEvent) {
     e.preventDefault();
-    if (
-      !form.title.trim() ||
-      !form.problem.trim() ||
-      !form.challengeDescription.trim() ||
-      form.deliverables.length === 0 ||
-      !form.vertical ||
-      form.sectors.length === 0 ||
-      !form.stage ||
-      !form.impact
-    ) {
+    const missing = [
+      !form.title.trim() ? "title" : "",
+      !form.problem.trim() ? "problem" : "",
+      !form.challengeDescription.trim() ? "description" : "",
+      form.deliverables.length === 0 ? "deliverables" : "",
+      !form.vertical ? "vertical" : "",
+      form.sectors.length === 0 ? "sectors" : "",
+      !form.stage ? "stage" : "",
+      !form.impact ? "impact" : "",
+    ].filter(Boolean);
+    if (missing.length > 0) {
       setError("Completá todos los campos obligatorios.");
-      void logFormEvent("validation_error", "detalles", { screen: "detalles" }).catch(() => {});
+      void logFormEvent("validation_error", missing[0], { missing }).catch(() => {});
       return;
     }
     setError(null);
@@ -69,13 +76,14 @@ export function ProjectDetailsForm() {
   }
 
   return (
-    <form onSubmit={onSubmit}>
+    <form onSubmit={onSubmit} onChange={touchFormActivity}>
       <FormCard
         backHref="/cargar-proyecto/compania"
         backIconOnly
         continueLabel={submitting ? "Publicando…" : "Publicar Proyecto"}
         continueType="submit"
         continueDisabled={submitting}
+        continueBusy={submitting}
       >
         <h1 className="section-heading">
           <span className="section-icon" aria-hidden>
@@ -96,7 +104,9 @@ export function ProjectDetailsForm() {
               type="text"
               maxLength={TITLE_MAX}
               value={form.title}
+              onFocus={() => viewClassicQuestion("title")}
               onChange={(e) => update("title", e.target.value)}
+              onBlur={(e) => answerClassicQuestion("title", Boolean(e.target.value.trim()))}
               placeholder="ej. Plataforma de E-commerce para PYMES"
               required
             />
@@ -114,7 +124,9 @@ export function ProjectDetailsForm() {
               type="text"
               maxLength={PROBLEM_MAX}
               value={form.problem}
+              onFocus={() => viewClassicQuestion("problem")}
               onChange={(e) => update("problem", e.target.value)}
+              onBlur={(e) => answerClassicQuestion("problem", Boolean(e.target.value.trim()))}
               placeholder="Ej. Reducir abandono en onboarding de usuarios"
               required
             />
@@ -132,7 +144,9 @@ export function ProjectDetailsForm() {
               maxLength={DESCRIPTION_MAX}
               rows={6}
               value={form.challengeDescription}
+              onFocus={() => viewClassicQuestion("description")}
               onChange={(e) => update("challengeDescription", e.target.value)}
+              onBlur={(e) => answerClassicQuestion("description", Boolean(e.target.value.trim()))}
               placeholder="Ej. Somos una startup B2B SaaS en etapa MVP. Notamos que muchos usuarios abandonan el onboarding antes de completar la primera acción clave..."
               required
             />
@@ -146,7 +160,12 @@ export function ProjectDetailsForm() {
             required
             options={deliverables}
             value={form.deliverables}
-            onChange={(v) => update("deliverables", v)}
+            onOpen={() => viewClassicQuestion("deliverables")}
+            onChange={(v) => {
+              update("deliverables", v);
+              answerClassicQuestion("deliverables", v.length > 0);
+              touchFormActivity();
+            }}
             max={5}
             placeholder="Selecciona entregables"
           />
@@ -159,7 +178,11 @@ export function ProjectDetailsForm() {
               <select
                 className="field-select"
                 value={form.vertical}
-                onChange={(e) => update("vertical", e.target.value)}
+                onFocus={() => viewClassicQuestion("vertical")}
+                onChange={(e) => {
+                  update("vertical", e.target.value);
+                  answerClassicQuestion("vertical", Boolean(e.target.value));
+                }}
                 required
               >
                 <option value="">Selecciona una vertical</option>
@@ -176,7 +199,12 @@ export function ProjectDetailsForm() {
               required
               options={businessSectors}
               value={form.sectors}
-              onChange={(v) => update("sectors", v)}
+              onOpen={() => viewClassicQuestion("sectors")}
+              onChange={(v) => {
+                update("sectors", v);
+                answerClassicQuestion("sectors", v.length > 0);
+                touchFormActivity();
+              }}
               max={5}
               placeholder="Selecciona sectores"
             />
@@ -188,7 +216,11 @@ export function ProjectDetailsForm() {
               <select
                 className="field-select"
                 value={form.stage}
-                onChange={(e) => update("stage", e.target.value)}
+                onFocus={() => viewClassicQuestion("stage")}
+                onChange={(e) => {
+                  update("stage", e.target.value);
+                  answerClassicQuestion("stage", Boolean(e.target.value));
+                }}
                 required
               >
                 <option value="">Selecciona la etapa</option>
@@ -207,7 +239,11 @@ export function ProjectDetailsForm() {
               <select
                 className="field-select"
                 value={form.impact}
-                onChange={(e) => update("impact", e.target.value)}
+                onFocus={() => viewClassicQuestion("impact")}
+                onChange={(e) => {
+                  update("impact", e.target.value);
+                  answerClassicQuestion("impact", Boolean(e.target.value));
+                }}
                 required
               >
                 <option value="">Selecciona el impacto</option>
@@ -224,7 +260,12 @@ export function ProjectDetailsForm() {
               optional
               options={roles}
               value={form.roles}
-              onChange={(v) => update("roles", v)}
+              onOpen={() => viewClassicQuestion("roles")}
+              onChange={(v) => {
+                update("roles", v);
+                answerClassicQuestion("roles", v.length > 0);
+                touchFormActivity();
+              }}
               max={7}
               placeholder="Selecciona roles"
             />
@@ -234,7 +275,12 @@ export function ProjectDetailsForm() {
               optional
               options={tools}
               value={form.tools}
-              onChange={(v) => update("tools", v)}
+              onOpen={() => viewClassicQuestion("tools")}
+              onChange={(v) => {
+                update("tools", v);
+                answerClassicQuestion("tools", v.length > 0);
+                touchFormActivity();
+              }}
               max={10}
               placeholder="Selecciona herramientas"
             />

@@ -65,7 +65,9 @@ Para el botón **Continuar como invitado**:
 
 1. **Authentication → Providers → Anonymous** → Enable → Save.
 
-Sin eso, el login anónimo responde que el provider está deshabilitado. El invitado igual genera un usuario en `auth.users` y un `profiles` (email vacío, nombre «Invitado»), así el formulario se guarda con las mismas tablas.
+Sin eso, el login anónimo responde que el provider está deshabilitado. El invitado igual genera un usuario en `auth.users` y un `profiles` (email vacío), así el formulario se guarda con las mismas tablas.
+
+Para que cada invitado tenga un nombre fijo (**Invitado 1**, **Invitado 2**, …), en el SQL Editor ejecutá también `supabase/migrations/20261030100000_guest_display_names.sql`. Eso numera a los que ya entraron y a los que entren después. Sin ese paso, en el panel se pueden separar igual mientras se vean varios a la vez, pero el nombre no queda guardado.
 
 ## 3b. Google OAuth (requerido — error `Unsupported provider: provider is not enabled`)
 

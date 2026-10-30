@@ -24,9 +24,10 @@ Abrí [http://localhost:3000](http://localhost:3000).
 
 | Ruta | Pantalla | Referencia diseño |
 |------|----------|-------------------|
-| `/simulation` | Dashboard simulación (métricas + equipos, datos demo) | ref. companies/simulation |
+| `/` | Dashboard público de simulación (métricas + equipos, datos demo) | ref. companies/simulation |
+| `/simulation` | Redirige a `/` | — |
 | `/mis-proyectos` | Mis proyectos (tarjetas, filtros, datos demo) | ref. companies/my-projects |
-| `/` | Landing «Sube tu desafío» + Cómo funciona | form-01 |
+| `/panel` | Panel de research en lenguaje claro | — |
 | `/cargar-proyecto` | Plan Free Trial | form-02 |
 | `/cargar-proyecto/modo` | Elegir flujo: clásico o preguntas guiadas | — |
 | `/cargar-proyecto/compania` | Información de la compañía (esquema A) | form-03 |

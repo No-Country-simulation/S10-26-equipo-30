@@ -29,9 +29,9 @@ export function AuthControls({ user, supabaseEnabled }: AuthControlsProps) {
     );
   }
 
-  const label = user.isAnonymous
-    ? "Invitado"
-    : (user.fullName ?? user.email.split("@")[0] ?? "Tester");
+  const label =
+    user.fullName ||
+    (user.isAnonymous ? "Invitado" : user.email.split("@")[0] || "Tester");
 
   async function signOut() {
     const supabase = createClient();
@@ -53,6 +53,9 @@ export function AuthControls({ user, supabaseEnabled }: AuthControlsProps) {
       <span className="auth-user-label" title={user.isAnonymous ? "Sesión de invitado" : user.email}>
         {label}
       </span>
+      <Link href="/panel" className="auth-panel-link">
+        Panel
+      </Link>
       <button type="button" className="auth-signout" onClick={() => void signOut()}>
         Salir
       </button>
