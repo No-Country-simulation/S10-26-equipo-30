@@ -888,11 +888,27 @@ function downloadCsv(table: TableView) {
   const lines = [table.columns, ...table.rows].map((row) =>
     row.map((cell) => `"${cell.replace(/"/g, '""')}"`).join(";"),
   );
-  const blob = new Blob([`\uFEFF${lines.join("\n")}`], { type: "text/csv;charset=utf-8" });
+  // Excel en Windows abre un CSV UTF-8 como ANSI (la ñ y los acentos se rompen).
+  // Con UTF-16 LE y su marca de inicio los lee bien al abrir el archivo.
+  const blob = new Blob([encodeUtf16Le(lines.join("\r\n"))], {
+    type: "text/csv;charset=utf-16le",
+  });
   const url = URL.createObjectURL(blob);
   const link = document.createElement("a");
   link.href = url;
   link.download = `${table.id}.csv`;
   link.click();
   URL.revokeObjectURL(url);
+}
+
+function encodeUtf16Le(text: string) {
+  const bytes = new Uint8Array(2 + text.length * 2);
+  bytes[0] = 0xff;
+  bytes[1] = 0xfe;
+  for (let index = 0; index < text.length; index += 1) {
+    const code = text.charCodeAt(index);
+    bytes[2 + index * 2] = code & 0xff;
+    bytes[3 + index * 2] = code >> 8;
+  }
+  return bytes;
 }
