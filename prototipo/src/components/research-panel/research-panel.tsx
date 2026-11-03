@@ -359,7 +359,7 @@ export function ResearchPanel() {
         rows: events.map((event) => {
           const eventVariant = sessionById.get(String(event.session_id ?? ""))?.flow_variant;
           return [
-            formatWhen(typeof event.created_at === "string" ? event.created_at : null),
+            formatWhen(eventInstant(event)),
             personForSession(event.session_id),
             labelEvent(typeof event.event_type === "string" ? event.event_type : null),
             labelEventStep(
@@ -819,15 +819,22 @@ function buildStats(sessions: Row[], submissions: Row[]) {
   };
 }
 
+/** Momento en que la persona hizo la acción. Si no hay marca del navegador, la del servidor. */
+function eventInstant(event: Row): string | null {
+  const occurredAt = asRecord(event.payload).occurred_at;
+  if (typeof occurredAt === "string" && occurredAt) return occurredAt;
+  return typeof event.created_at === "string" ? event.created_at : null;
+}
+
 function timeOnStep(events: Row[], event: Row) {
   const sessionId = String(event.session_id ?? "");
-  const currentAt = typeof event.created_at === "string" ? event.created_at : "";
+  const currentAt = eventInstant(event);
   if (!sessionId || !currentAt) return "—";
 
   let nextAt: string | null = null;
   for (const other of events) {
     if (String(other.session_id ?? "") !== sessionId) continue;
-    const createdAt = typeof other.created_at === "string" ? other.created_at : "";
+    const createdAt = eventInstant(other);
     if (!createdAt || createdAt < currentAt) continue;
     if (createdAt === currentAt && Number(other.id ?? 0) <= Number(event.id ?? 0)) continue;
     if (!nextAt || createdAt < nextAt) nextAt = createdAt;

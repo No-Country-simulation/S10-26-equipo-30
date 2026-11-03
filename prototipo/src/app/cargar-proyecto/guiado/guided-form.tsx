@@ -1,6 +1,6 @@
 "use client";
 
-import { FormEvent, useEffect, useState, useSyncExternalStore } from "react";
+import { FormEvent, useEffect, useRef, useState, useSyncExternalStore } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { GradientButton } from "@/components/gradient-button";
@@ -28,10 +28,11 @@ import {
   type ProjectFormData,
 } from "@/lib/form-storage";
 import {
+  flushFormPersistence,
   isAuthRequired,
   logFormEvent,
   restartAfterLogin,
-  saveFormCheckpoint,
+  saveGuidedStepProgress,
   submitFormTest,
   touchFormActivity,
 } from "@/lib/research-persistence";
@@ -112,6 +113,7 @@ export function GuidedForm() {
   const session = local ?? (stored === SERVER_SESSION ? null : stored);
   const [error, setError] = useState<string | null>(null);
   const [submitting, setSubmitting] = useState(false);
+  const advanceLock = useRef<number | null>(null);
 
   const stepIndex = session?.stepIndex ?? 0;
   const draft = session?.draft ?? SERVER_SESSION.draft;
@@ -129,6 +131,12 @@ export function GuidedForm() {
   }, [session]);
 
   const ready = session !== null;
+
+  useEffect(() => {
+    if (advanceLock.current !== null && advanceLock.current !== stepIndex) {
+      advanceLock.current = null;
+    }
+  }, [stepIndex]);
 
   useEffect(() => {
     if (!ready || !step) return;
@@ -187,11 +195,20 @@ export function GuidedForm() {
   }
 
   function goBack() {
+    advanceLock.current = null;
     edit((current) => ({ ...current, stepIndex: Math.max(0, current.stepIndex - 1) }));
   }
 
+  function reportSaveError(cause: unknown, message: string) {
+    if (isAuthRequired(cause)) {
+      restartAfterLogin();
+      return;
+    }
+    setError(cause instanceof Error ? cause.message : message);
+  }
+
   async function goNext() {
-    if (submitting) return;
+    if (submitting || advanceLock.current !== null) return;
     if (!session || !canContinue) {
       setError("Completá este paso para continuar.");
       void logFormEvent("validation_error", step.id).catch(() => {});
@@ -201,24 +218,25 @@ export function GuidedForm() {
     saveProject(session.draft.project);
     const draft = loadDraft();
     setError(null);
+
+    if (!isLast) {
+      const completedStepId = step.id;
+      advanceLock.current = stepIndex;
+      edit((current) => ({ ...current, stepIndex: current.stepIndex + 1 }));
+      void saveGuidedStepProgress(draft, completedStepId).catch((cause) => {
+        reportSaveError(cause, "No se pudo guardar el paso anterior.");
+      });
+      return;
+    }
+
     setSubmitting(true);
     try {
-      if (isLast) {
-        await submitFormTest(draft);
-        sessionStorage.removeItem(GUIDED_STEP_STORAGE_KEY);
-        router.push("/post-envio?enviado=1");
-        return;
-      }
-      await saveFormCheckpoint(draft, step.id, "step_complete");
-      await logFormEvent("step_complete", step.id);
-      edit((current) => ({ ...current, stepIndex: current.stepIndex + 1 }));
-      setSubmitting(false);
+      await flushFormPersistence();
+      await submitFormTest(draft);
+      sessionStorage.removeItem(GUIDED_STEP_STORAGE_KEY);
+      router.push("/post-envio?enviado=1");
     } catch (cause) {
-      if (isAuthRequired(cause)) {
-        restartAfterLogin();
-        return;
-      }
-      setError(cause instanceof Error ? cause.message : "No se pudo guardar este paso.");
+      reportSaveError(cause, "No se pudo guardar este paso.");
       setSubmitting(false);
     }
   }

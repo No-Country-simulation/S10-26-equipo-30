@@ -80,14 +80,36 @@ export function clearResearchSession() {
   sessionStorage.removeItem(LAST_STEP_KEY);
 }
 
+/**
+ * Sesión local del navegador. No consulta `/auth/v1/user` en cada paso:
+ * el token viaja en cada escritura y RLS es quien autoriza.
+ * Si el access token está por vencer, el cliente lo renueva solo.
+ */
 async function requireUser() {
   const supabase = createClient();
-  const { data, error } = await supabase.auth.getUser();
-  if (error || !data.user) {
+  const { data, error } = await supabase.auth.getSession();
+  const user = data.session?.user;
+  if (error || !user) {
     throw new AuthRequiredError();
   }
-  const guest = Boolean(data.user.is_anonymous) || !data.user.email;
-  return { supabase, userId: data.user.id, guest };
+  const guest = Boolean(user.is_anonymous) || !user.email;
+  return { supabase, userId: user.id, guest };
+}
+
+let persistenceTail: Promise<void> = Promise.resolve();
+
+/** Las escrituras del formulario corren en orden, sin frenar la pantalla. */
+function enqueuePersistence<T>(task: () => Promise<T>): Promise<T> {
+  const result = persistenceTail.then(task, task);
+  persistenceTail = result.then(
+    () => undefined,
+    () => undefined,
+  );
+  return result;
+}
+
+export function flushFormPersistence(): Promise<void> {
+  return persistenceTail;
 }
 
 function formSessionId() {
@@ -242,14 +264,23 @@ export async function noteReturnedToMode() {
   await insertStepBack(supabase, sessionId, lastStep, "modo");
 }
 
-export async function logFormEvent(
+export function logFormEvent(
   eventType: string,
   stepId?: string | null,
   payload: Record<string, unknown> = {},
 ) {
   const sessionId = formSessionId();
-  if (!sessionId) return;
+  if (!sessionId) return Promise.resolve();
+  const stamped = { ...payload, occurred_at: new Date().toISOString() };
+  return enqueuePersistence(() => writeFormEvent(sessionId, eventType, stepId, stamped));
+}
 
+async function writeFormEvent(
+  sessionId: string,
+  eventType: string,
+  stepId?: string | null,
+  payload: Record<string, unknown> = {},
+) {
   const { supabase, userId } = await requireUser();
   const isView = eventType === "step_view" || eventType === "screen_view";
   if (isView && stepId) {
@@ -276,6 +307,36 @@ export async function logFormEvent(
       .eq("user_id", userId)
       .eq("status", "in_progress");
   }
+}
+
+/**
+ * Borrador + pregunta completada, en una sola tanda y sin bloquear el avance.
+ * El paso en el que está la persona lo actualiza el `step_view` de la pregunta siguiente.
+ */
+export function saveGuidedStepProgress(draft: ProjectDraft, stepId: string) {
+  const sessionId = formSessionId();
+  if (!sessionId) return Promise.resolve();
+  const occurredAt = new Date().toISOString();
+  return enqueuePersistence(async () => {
+    const { supabase } = await requireUser();
+    const [snapshot, event] = await Promise.all([
+      supabase.from("form_draft_snapshots").insert({
+        session_id: sessionId,
+        company: draft.company,
+        project: draft.project,
+        step_id: stepId,
+        capture_reason: "step_complete",
+      }),
+      supabase.from("session_events").insert({
+        session_id: sessionId,
+        event_type: "step_complete",
+        step_id: stepId,
+        payload: { occurred_at: occurredAt },
+      }),
+    ]);
+    if (snapshot.error) throw toError(snapshot.error);
+    if (event.error) throw toError(event.error);
+  });
 }
 
 export async function saveFormCheckpoint(
