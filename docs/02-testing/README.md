@@ -1,14 +1,10 @@
 # 02 — Testing e iteración
 
-Un documento (o subcarpeta) por pieza del flujo, con protocolo, usuarios, hallazgos y link al preview de Vercel usado.
-
 Piezas del flujo UXFlow:
 
-1. Dashboard público y propuesta de valor  
-2. Formulario inicial (A/B)  
-3. Post-envío y comunicación  
-4. Recuperación de abandonos  
-5. Contexto adicional  
-6. Aprobación y experiencia post-aprobación  
-
-**Persistencia (Supabase):** esquema SQL en [`supabase/migrations/`](../../supabase/migrations/) y guía en [`modelo-datos-supabase.md`](./modelo-datos-supabase.md).
+1. [Dashboard público y propuesta de valor](../../entregables/etapa-2-testing/pieza-1-dashboard/pieza-1-dashboard.md)
+2. [Formulario inicial (A/B)](../../entregables/etapa-2-testing/pieza-2-formulario-inicial/pieza-2-formulario-inicial.md)
+3. [Post-envío y comunicación](../../entregables/etapa-2-testing/pieza-3-post-envio/pieza-3-post-envio.md)
+4. [Recuperación de abandonos](../../entregables/etapa-2-testing/pieza-4-recuperacion-de-abandonos/pieza-4-recuperacion-de-abandonos.md)
+5. [Contexto adicional](../../entregables/etapa-2-testing/pieza-5-contexto-adicional/pieza-5-contexto-adicional.md)
+6. [Aprobación y experiencia post-aprobación](../../entregables/etapa-2-testing/pieza-6-aprobacion/pieza-6-aprobacion.md)
