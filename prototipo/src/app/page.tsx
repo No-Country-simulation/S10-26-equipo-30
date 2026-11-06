@@ -9,7 +9,7 @@ export const metadata: Metadata = {
 
 export default function Home() {
   return (
-    <main className="page-shell sim-page">
+    <main className="flex min-h-0 flex-1 flex-col overflow-hidden">
       <DashboardSession />
       <SimulationDashboard data={simulationDashboard} />
     </main>

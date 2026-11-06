@@ -4,7 +4,7 @@ export function WhatsAppFab() {
       href="https://wa.me/"
       target="_blank"
       rel="noopener noreferrer"
-      className="whatsapp-fab"
+      className="fixed right-6 bottom-6 z-[45] flex h-[3.25rem] w-[3.25rem] items-center justify-center rounded-full bg-[linear-gradient(135deg,#8b5cf6,#6366f1)] text-white shadow-[0_8px_32px_rgba(99,102,241,0.45)] transition-transform hover:scale-105"
       aria-label="Contactar por WhatsApp"
     >
       <svg viewBox="0 0 24 24" fill="currentColor" className="h-6 w-6" aria-hidden>

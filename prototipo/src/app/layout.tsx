@@ -44,7 +44,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
       lang="es"
       className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
     >
-      <body className="flex min-h-full flex-col">
+      <body className="m-0 flex h-dvh min-h-dvh flex-col overflow-y-auto bg-[radial-gradient(ellipse_120%_80%_at_50%_-20%,#1a1040_0%,#070b12_55%)] font-sans text-slate-100">
         <Suspense fallback={<SiteHeaderFallback />}>
           <SiteHeader />
         </Suspense>
