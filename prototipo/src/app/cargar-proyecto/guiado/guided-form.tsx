@@ -3,6 +3,19 @@
 import { FormEvent, useEffect, useRef, useState, useSyncExternalStore } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import {
+  backLinkClass,
+  fieldInputClass,
+  fieldMetaClass,
+  fieldTextareaClass,
+  formCardShellClass,
+  formErrorClass,
+  guidedFillClass,
+  guidedTrackClass,
+  phoneDialClass,
+  phoneRowClass,
+  requiredMarkClass,
+} from "@/components/form-styles";
 import { GradientButton } from "@/components/gradient-button";
 import { MultiSelect } from "@/components/multi-select";
 import { dialCodeForCountry } from "@/lib/countries";
@@ -247,46 +260,55 @@ export function GuidedForm() {
   }
 
   if (!session) {
-    return <div className="form-card">Cargando…</div>;
+    return <div className={formCardShellClass}>Cargando…</div>;
   }
 
   const continueLabel = isLast ? "Publicar Proyecto" : !step.required && !filled ? "Omitir" : "Continuar";
 
   return (
     <form onSubmit={onSubmit} onChange={touchFormActivity}>
-      <div className="form-card guided-card">
-        <header className="guided-progress">
-          <div className="guided-progress-top">
-            <p className="guided-step-count">{formatStepCounter(stepIndex)}</p>
-            <p className="guided-time" aria-live="polite">
+      <div className={`${formCardShellClass} flex flex-col`}>
+        <header className="mb-6">
+          <div className="mb-[0.65rem] flex items-baseline justify-between gap-4">
+            <p className="text-[0.95rem] font-bold tracking-[0.04em] tabular-nums">
+              {formatStepCounter(stepIndex)}
+            </p>
+            <p className="text-[0.85rem] font-semibold text-cyan-300" aria-live="polite">
               {formatRemainingTime(remainingSeconds(stepIndex))}
             </p>
           </div>
           <div
-            className="guided-track"
+            className={guidedTrackClass}
             role="progressbar"
             aria-valuemin={1}
             aria-valuemax={total}
             aria-valuenow={stepIndex + 1}
             aria-valuetext={formatStepCounter(stepIndex)}
           >
-            <div className="guided-fill" style={{ width: `${progressPercent(stepIndex)}%` }} />
+            <div className={guidedFillClass} style={{ width: `${progressPercent(stepIndex)}%` }} />
           </div>
-          <p className="guided-section">{step.sectionLabel}</p>
+          <p className="mt-[0.85rem] text-xs tracking-[0.08em] text-violet-300 uppercase">
+            {step.sectionLabel}
+          </p>
         </header>
 
-        <div className="guided-body">
-          <h1 className="guided-question">
+        <div>
+          <h1 className="mb-[0.45rem] text-[clamp(1.35rem,3vw,1.75rem)] leading-[1.25] font-semibold tracking-[-0.02em]">
             {step.question}
             {step.required ? (
-              <span className="field-required">*</span>
+              <span className={requiredMarkClass}>*</span>
             ) : (
-              <span className="guided-optional"> Opcional</span>
+              <span className="ml-[0.45rem] align-middle text-[0.78rem] font-medium tracking-normal text-slate-400">
+                {" "}
+                Opcional
+              </span>
             )}
           </h1>
-          {step.hint ? <p className="guided-hint">{step.hint}</p> : null}
-          {error ? <p className="form-error">{error}</p> : null}
-          <div id="guided-field" className="guided-field">
+          {step.hint ? (
+            <p className="mb-5 text-[0.92rem] leading-normal text-nc-muted">{step.hint}</p>
+          ) : null}
+          {error ? <p className={formErrorClass}>{error}</p> : null}
+          <div id="guided-field">
             <StepField
               step={step}
               draft={draft}
@@ -297,13 +319,18 @@ export function GuidedForm() {
           </div>
         </div>
 
-        <div className="guided-nav">
+        <div className="mt-7 flex items-center justify-between gap-4">
           {stepIndex === 0 ? (
-            <Link href="/cargar-proyecto/modo" className="form-back-link">
+            <Link href="/cargar-proyecto/modo" className={backLinkClass}>
               ← Atrás
             </Link>
           ) : (
-            <button type="button" className="form-back-link guided-back" onClick={goBack} disabled={submitting}>
+            <button
+              type="button"
+              className={`${backLinkClass} cursor-pointer border-0 bg-transparent p-0`}
+              onClick={goBack}
+              disabled={submitting}
+            >
               ← Atrás
             </button>
           )}
@@ -332,7 +359,7 @@ function StepField({
   if (step.scope === "company" && step.kind === "text") {
     return (
       <input
-        className="field-input"
+        className={fieldInputClass}
         type="text"
         value={draft.company.companyName}
         placeholder={step.placeholder}
@@ -346,7 +373,7 @@ function StepField({
     const value = draft.company[step.key];
     return (
       <select
-        className="field-select"
+        className={fieldInputClass}
         value={value}
         onChange={(event) =>
           step.key === "country" ? onCountry(event.target.value) : onCompany(step.key, event.target.value)
@@ -365,16 +392,16 @@ function StepField({
 
   if (step.scope === "company" && step.kind === "phone") {
     return (
-      <div className="phone-row">
+      <div className={phoneRowClass}>
         <input
-          className="field-input phone-dial"
+          className={phoneDialClass}
           type="text"
           readOnly
           value={draft.company.phoneDialCode || "---"}
           aria-label="Código de área"
         />
         <input
-          className="field-input"
+          className={fieldInputClass}
           type="tel"
           inputMode="numeric"
           value={draft.company.phoneNumber}
@@ -392,7 +419,7 @@ function StepField({
       return (
         <>
           <textarea
-            className="field-textarea"
+            className={fieldTextareaClass}
             rows={6}
             maxLength={step.maxLength}
             value={value}
@@ -400,7 +427,7 @@ function StepField({
             onChange={(event) => onProject(step.key, event.target.value)}
             required
           />
-          <p className="field-meta">
+          <p className={fieldMetaClass}>
             {value.length}/{step.maxLength}
           </p>
         </>
@@ -409,7 +436,7 @@ function StepField({
     return (
       <>
         <input
-          className="field-input"
+          className={fieldInputClass}
           type="text"
           maxLength={step.maxLength}
           value={value}
@@ -417,7 +444,7 @@ function StepField({
           onChange={(event) => onProject(step.key, event.target.value)}
           required
         />
-        <p className="field-meta">
+        <p className={fieldMetaClass}>
           {value.length}/{step.maxLength}
         </p>
       </>
@@ -427,7 +454,7 @@ function StepField({
   if (step.scope === "project" && step.kind === "select") {
     return (
       <select
-        className="field-select"
+        className={fieldInputClass}
         value={draft.project[step.key]}
         onChange={(event) => onProject(step.key, event.target.value)}
         required

@@ -3,6 +3,18 @@
 import { FormEvent, useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { FormCard } from "@/components/form-card";
+import {
+  fieldInputClass,
+  fieldLabelClass,
+  formErrorClass,
+  formGrid2Class,
+  formGridClass,
+  phoneDialClass,
+  phoneRowClass,
+  requiredMarkClass,
+  sectionHeadingClass,
+  sectionIconClass,
+} from "@/components/form-styles";
 import { countries, dialCodeForCountry } from "@/lib/countries";
 import { organizationSizes, organizationTypes } from "@/lib/form-options";
 import { loadDraft, saveCompany, type CompanyFormData } from "@/lib/form-storage";
@@ -75,6 +87,7 @@ export function CompanyForm() {
   return (
     <form onSubmit={onSubmit} onChange={touchFormActivity}>
       <FormCard
+        variant="shell"
         backHref="/cargar-proyecto/modo"
         backIconOnly
         continueLabel={submitting ? "Guardando…" : "Continuar"}
@@ -82,22 +95,22 @@ export function CompanyForm() {
         continueDisabled={submitting}
         continueBusy={submitting}
       >
-        <h1 className="section-heading">
-          <span className="section-icon" aria-hidden>
+        <h1 className={sectionHeadingClass}>
+          <span className={sectionIconClass} aria-hidden>
             🏢
           </span>
           Información de la Compañía
         </h1>
 
-        {error ? <p className="form-error">{error}</p> : null}
+        {error ? <p className={formErrorClass}>{error}</p> : null}
 
-        <div className="form-grid">
-          <label className="field">
-            <span className="field-label">
-              Nombre de la Compañía<span className="field-required">*</span>
+        <div className={formGridClass}>
+          <label>
+            <span className={fieldLabelClass}>
+              Nombre de la Compañía<span className={requiredMarkClass}>*</span>
             </span>
             <input
-              className="field-input"
+              className={fieldInputClass}
               type="text"
               value={form.companyName}
               onFocus={() => viewClassicQuestion("company-name")}
@@ -108,13 +121,13 @@ export function CompanyForm() {
             />
           </label>
 
-          <div className="form-grid-2">
-            <label className="field">
-              <span className="field-label">
-                Tipo de organización<span className="field-required">*</span>
+          <div className={formGrid2Class}>
+            <label>
+              <span className={fieldLabelClass}>
+                Tipo de organización<span className={requiredMarkClass}>*</span>
               </span>
               <select
-                className="field-select"
+                className={fieldInputClass}
                 value={form.organizationType}
                 onFocus={() => viewClassicQuestion("organization-type")}
                 onChange={(e) => {
@@ -132,12 +145,12 @@ export function CompanyForm() {
               </select>
             </label>
 
-            <label className="field">
-              <span className="field-label">
-                Tamaño de la organización<span className="field-required">*</span>
+            <label>
+              <span className={fieldLabelClass}>
+                Tamaño de la organización<span className={requiredMarkClass}>*</span>
               </span>
               <select
-                className="field-select"
+                className={fieldInputClass}
                 value={form.organizationSize}
                 onFocus={() => viewClassicQuestion("organization-size")}
                 onChange={(e) => {
@@ -156,12 +169,12 @@ export function CompanyForm() {
             </label>
           </div>
 
-          <label className="field">
-            <span className="field-label">
-              País<span className="field-required">*</span>
+          <label>
+            <span className={fieldLabelClass}>
+              País<span className={requiredMarkClass}>*</span>
             </span>
             <select
-              className="field-select"
+              className={fieldInputClass}
               value={form.country}
               onFocus={() => viewClassicQuestion("country")}
               onChange={(e) => {
@@ -179,20 +192,20 @@ export function CompanyForm() {
             </select>
           </label>
 
-          <div className="field">
-            <span className="field-label">
-              Teléfono Personal<span className="field-required">*</span>
+          <div>
+            <span className={fieldLabelClass}>
+              Teléfono Personal<span className={requiredMarkClass}>*</span>
             </span>
-            <div className="phone-row">
+            <div className={phoneRowClass}>
               <input
-                className="field-input phone-dial"
+                className={phoneDialClass}
                 type="text"
                 readOnly
                 value={form.phoneDialCode || "---"}
                 aria-label="Código de área"
               />
               <input
-                className="field-input"
+                className={fieldInputClass}
                 type="tel"
                 inputMode="numeric"
                 value={form.phoneNumber}

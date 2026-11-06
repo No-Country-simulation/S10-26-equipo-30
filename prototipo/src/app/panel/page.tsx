@@ -6,8 +6,10 @@ import { getAuthUser } from "@/lib/supabase/server";
 
 export default function PanelPage() {
   return (
-    <main className="page-shell rp-page">
-      <Suspense fallback={<p className="rp-lead">Cargando los datos de las pruebas…</p>}>
+    <main className="mx-auto w-full max-w-[1180px] flex-[1_0_auto] px-5 pt-5 pb-12">
+      <Suspense
+        fallback={<p className="leading-normal text-nc-muted">Cargando los datos de las pruebas…</p>}
+      >
         <PanelGate />
       </Suspense>
     </main>

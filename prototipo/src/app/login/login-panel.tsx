@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import { GoogleSignInButton } from "@/components/google-sign-in-button";
 import { GuestSignInButton } from "@/components/guest-sign-in-button";
+import { loginCardClass, loginErrorClass } from "@/app/login/login-styles";
 
 function safeNextPath(raw: string | null): string {
   if (!raw || !raw.startsWith("/") || raw.startsWith("//")) {
@@ -31,17 +32,20 @@ export function LoginPanel({ configured }: LoginPanelProps) {
           : null;
 
   return (
-    <div className="form-card login-card">
-      <Link href="/" className="form-back-link">
+    <div className={loginCardClass}>
+      <Link
+        href="/"
+        className="self-start text-[0.9rem] text-nc-muted transition-colors hover:text-slate-100"
+      >
         ← Volver
       </Link>
-      <h1 className="login-title">Identificá tu sesión de test</h1>
-      <p className="login-lead">
+      <h1 className="m-0 text-2xl font-bold tracking-tight">Identificá tu sesión de test</h1>
+      <p className="m-0 text-[0.9rem] leading-relaxed text-nc-muted">
         Entrá con Google para identificar tu cuenta, o seguí como invitado si preferís no
         vincularla. En ambos casos el recorrido del formulario se guarda para el research.
       </p>
 
-      {errorMessage ? <p className="form-error">{errorMessage}</p> : null}
+      {errorMessage ? <p className={loginErrorClass}>{errorMessage}</p> : null}
 
       {configured ? (
         <>
@@ -49,14 +53,14 @@ export function LoginPanel({ configured }: LoginPanelProps) {
           <GuestSignInButton nextPath={nextPath} />
         </>
       ) : (
-        <p className="login-config-hint">
+        <p className="m-0 text-[0.9rem] leading-relaxed text-nc-muted">
           Configurá <code>NEXT_PUBLIC_SUPABASE_URL</code> y{" "}
           <code>NEXT_PUBLIC_SUPABASE_ANON_KEY</code> (local: <code>.env.local</code>; Vercel:
           Environment Variables).
         </p>
       )}
 
-      <p className="login-footnote">
+      <p className="m-0 text-[0.8rem] leading-relaxed text-slate-500">
         Con Google registramos el email para el research interno. Como invitado no pedimos cuenta:
         igual se guarda el formulario, asociado a una sesión anónima.
       </p>

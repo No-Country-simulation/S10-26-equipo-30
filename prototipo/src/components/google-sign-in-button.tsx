@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { loginErrorClass } from "@/app/login/login-styles";
 import { createClient } from "@/lib/supabase/client";
 
 type GoogleSignInButtonProps = {
@@ -44,17 +45,17 @@ export function GoogleSignInButton({ nextPath }: GoogleSignInButtonProps) {
   }
 
   return (
-    <div className="google-signin-wrap">
+    <div className="flex flex-col gap-2.5">
       <button
         type="button"
-        className="google-signin-btn"
+        className="inline-flex w-full cursor-pointer items-center justify-center gap-2.5 rounded-[0.65rem] border border-nc-border bg-white px-4 py-3 text-[0.95rem] font-semibold text-slate-800 transition-[box-shadow,transform] duration-150 enabled:hover:-translate-y-px enabled:hover:shadow-[0_4px_20px_rgba(0,0,0,0.15)] disabled:cursor-wait disabled:opacity-70"
         onClick={() => void signIn()}
         disabled={loading}
       >
         <GoogleIcon />
         {loading ? "Redirigiendo…" : "Continuar con Google"}
       </button>
-      {error ? <p className="form-error">{error}</p> : null}
+      {error ? <p className={loginErrorClass}>{error}</p> : null}
     </div>
   );
 }

@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { useState } from "react";
 import type { AuthUserSummary } from "@/lib/supabase/types";
 import { createClient } from "@/lib/supabase/client";
 import { clearResearchSession } from "@/lib/research-persistence";
@@ -9,6 +10,35 @@ type AuthControlsProps = {
   user: AuthUserSummary | null;
   supabaseEnabled: boolean;
 };
+
+function UserAvatar({ src, initial }: { src: string | null; initial: string }) {
+  const [failed, setFailed] = useState(false);
+
+  if (src && !failed) {
+    return (
+      // eslint-disable-next-line @next/next/no-img-element
+      <img
+        src={src}
+        alt=""
+        // Google bloquea las fotos de perfil cuando la request lleva Referer de otro sitio.
+        referrerPolicy="no-referrer"
+        onError={() => setFailed(true)}
+        className="h-8 w-8 rounded-full border border-nc-border object-cover"
+        width={32}
+        height={32}
+      />
+    );
+  }
+
+  return (
+    <span
+      className="inline-flex h-8 w-8 items-center justify-center rounded-full border border-nc-border bg-indigo-500/25 text-[0.85rem] font-bold"
+      aria-hidden
+    >
+      {initial}
+    </span>
+  );
+}
 
 export function AuthControls({ user, supabaseEnabled }: AuthControlsProps) {
   if (!supabaseEnabled) {
@@ -47,23 +77,7 @@ export function AuthControls({ user, supabaseEnabled }: AuthControlsProps) {
 
   return (
     <div className="flex max-w-none items-center gap-2 md:max-w-48">
-      {user.avatarUrl ? (
-        // eslint-disable-next-line @next/next/no-img-element
-        <img
-          src={user.avatarUrl}
-          alt=""
-          className="h-8 w-8 rounded-full border border-nc-border object-cover"
-          width={32}
-          height={32}
-        />
-      ) : (
-        <span
-          className="inline-flex h-8 w-8 items-center justify-center rounded-full border border-nc-border bg-indigo-500/25 text-[0.85rem] font-bold"
-          aria-hidden
-        >
-          {label.charAt(0).toUpperCase()}
-        </span>
-      )}
+      <UserAvatar src={user.avatarUrl} initial={label.charAt(0).toUpperCase()} />
       <span
         className="hidden overflow-hidden text-[0.8rem] text-ellipsis whitespace-nowrap text-nc-muted md:inline"
         title={user.isAnonymous ? "Sesión de invitado" : user.email}

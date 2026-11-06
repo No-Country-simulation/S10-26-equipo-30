@@ -2,6 +2,8 @@
 
 import { useEffect, useMemo, useRef, useState, type RefObject } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
+import { formErrorClass } from "@/components/form-styles";
+import { cx } from "@/lib/cx";
 import { createClient } from "@/lib/supabase/client";
 import {
   asRecord,
@@ -21,6 +23,19 @@ import {
 } from "@/lib/research-labels";
 
 type Row = Record<string, unknown>;
+
+const mutedTextClass = "leading-normal text-nc-muted";
+
+const sectionClass = "mt-5 scroll-mt-[5.5rem]";
+
+const sectionTitleClass = "mb-[0.65rem] text-[1.05rem]";
+
+const insightButtonClass = "cursor-pointer border-0 bg-transparent p-0 text-left";
+
+const tableCellClass =
+  "[&_td]:border-b [&_td]:border-nc-border [&_td]:px-[0.65rem] [&_td]:py-[0.55rem] [&_td]:text-left [&_td]:align-top [&_th]:border-b [&_th]:border-nc-border [&_th]:px-[0.65rem] [&_th]:py-[0.55rem] [&_th]:text-left [&_th]:align-top";
+
+const tableClass = `w-full border-collapse text-[0.86rem] ${tableCellClass} [&_th]:text-xs [&_th]:font-[650] [&_th]:tracking-[0.03em] [&_th]:text-slate-400`;
 
 type TableId =
   | "resumen"
@@ -428,26 +443,27 @@ export function ResearchPanel() {
   }, [focusEvents, focusSessionId, insight, tab]);
 
   if (loading) {
-    return <p className="rp-lead">Cargando los datos de las pruebas…</p>;
+    return <p className={mutedTextClass}>Cargando los datos de las pruebas…</p>;
   }
 
   if (error) {
-    return <p className="form-error">{error}</p>;
+    return <p className={formErrorClass}>{error}</p>;
   }
 
   return (
-    <div className="rp">
-      <header className="rp-header">
-        <p className="rp-eyebrow">Research</p>
-        <h1 className="rp-title">Panel de pruebas</h1>
-        <p className="rp-lead">
+    <div>
+      <header>
+        <p className="mb-1 text-xs tracking-[0.08em] text-nc-muted uppercase">Research</p>
+        <h1 className="mb-2 text-[1.7rem]">Panel de pruebas</h1>
+        <p className={mutedTextClass}>
           {fullView
             ? "Estás viendo las pruebas de todo el equipo. Los números de abajo sirven para comparar el formulario clásico con las preguntas guiadas."
             : "Estás viendo solo tus pruebas. Para analizar las de todas las personas, alguien del equipo tiene que marcarte como investigador en la base."}
         </p>
-        <label className="rp-filter">
+        <label className="mt-4 flex items-center gap-[0.6rem] text-[0.85rem] text-nc-muted">
           <span>Persona</span>
           <select
+            className="min-w-56 rounded-lg border border-nc-border bg-[rgba(12,18,28,0.9)] px-[0.6rem] py-[0.4rem] text-[0.85rem] text-slate-100"
             value={personId}
             onChange={(event) => {
               setPersonId(event.target.value);
@@ -464,14 +480,19 @@ export function ResearchPanel() {
         </label>
       </header>
 
-      <div className="rp-tabs" role="tablist" aria-label="Secciones del panel">
+      <div className="my-5 flex flex-wrap gap-[0.4rem]" role="tablist" aria-label="Secciones del panel">
         {tabs.map((item) => (
           <button
             key={item.id}
             type="button"
             role="tab"
             aria-selected={tab === item.id}
-            className={tab === item.id ? "rp-tab is-active" : "rp-tab"}
+            className={cx(
+              "cursor-pointer rounded-full border px-3 py-[0.4rem] text-[0.82rem]",
+              tab === item.id
+                ? "border-violet-500/50 bg-violet-500/25 text-slate-100"
+                : "border-nc-border bg-transparent text-nc-muted",
+            )}
             onClick={() => {
               setTab(item.id);
               setInsight(null);
@@ -493,7 +514,7 @@ export function ResearchPanel() {
         />
       ) : null}
       {tab === "actividad" && focusSessionId && focusEvents === null ? (
-        <p className="rp-lead">Cargando el recorrido…</p>
+        <p className={mutedTextClass}>Cargando el recorrido…</p>
       ) : null}
       {activeTable && !(tab === "actividad" && focusSessionId && focusEvents === null) ? (
         <DataTable
@@ -542,21 +563,28 @@ function Summary({ stats, onOpen }: { stats: Stats; onOpen: (insight: Insight) =
   ];
 
   return (
-    <section className="rp-summary" aria-label="Resumen">
-      <ul className="rp-cards">
+    <section aria-label="Resumen">
+      <ul className="mb-5 grid list-none grid-cols-1 gap-3 min-[801px]:grid-cols-3">
         {cards.map((card) => (
-          <li key={card.label} className="rp-card">
-            <button type="button" className="rp-card-button" onClick={() => onOpen(card.insight)}>
-              <span className="rp-card-value">{card.value}</span>
-              <span className="rp-card-label">{card.label}</span>
+          <li
+            key={card.label}
+            className="flex rounded-[0.8rem] border border-nc-border bg-[rgba(12,18,28,0.75)]"
+          >
+            <button
+              type="button"
+              className="w-full flex-auto cursor-pointer rounded-[inherit] border-0 bg-transparent px-4 py-[0.9rem] text-left"
+              onClick={() => onOpen(card.insight)}
+            >
+              <span className="block text-[1.35rem] font-bold">{card.value}</span>
+              <span className="text-[0.82rem] text-nc-muted">{card.label}</span>
             </button>
           </li>
         ))}
       </ul>
 
-      <div className="rp-compare">
-        <h2>Formulario clásico y preguntas guiadas</h2>
-        <table className="rp-table">
+      <div className={sectionClass}>
+        <h2 className={sectionTitleClass}>Formulario clásico y preguntas guiadas</h2>
+        <table className={tableClass}>
           <thead>
             <tr>
               <th>Tipo</th>
@@ -571,7 +599,7 @@ function Summary({ stats, onOpen }: { stats: Stats; onOpen: (insight: Insight) =
                 <td>
                   <button
                     type="button"
-                    className="rp-insight"
+                    className={insightButtonClass}
                     aria-label={`${row.label}: ver las pruebas iniciadas`}
                     onClick={() => onOpen({ id: "sesiones", status: "all", variant: row.key, step: null })}
                   >
@@ -581,7 +609,7 @@ function Summary({ stats, onOpen }: { stats: Stats; onOpen: (insight: Insight) =
                 <td>
                   <button
                     type="button"
-                    className="rp-insight"
+                    className={insightButtonClass}
                     aria-label={`${row.label}: ${row.started} iniciadas`}
                     onClick={() => onOpen({ id: "sesiones", status: "all", variant: row.key, step: null })}
                   >
@@ -591,7 +619,7 @@ function Summary({ stats, onOpen }: { stats: Stats; onOpen: (insight: Insight) =
                 <td>
                   <button
                     type="button"
-                    className="rp-insight"
+                    className={insightButtonClass}
                     aria-label={`${row.label}: ${row.submitted} enviadas`}
                     onClick={() =>
                       onOpen({ id: "sesiones", status: "submitted", variant: row.key, step: null })
@@ -603,7 +631,7 @@ function Summary({ stats, onOpen }: { stats: Stats; onOpen: (insight: Insight) =
                 <td>
                   <button
                     type="button"
-                    className="rp-insight"
+                    className={insightButtonClass}
                     aria-label={`${row.label}: ${row.rate} llegaron a enviar`}
                     onClick={() =>
                       onOpen({ id: "sesiones", status: "submitted", variant: row.key, step: null })
@@ -618,12 +646,12 @@ function Summary({ stats, onOpen }: { stats: Stats; onOpen: (insight: Insight) =
         </table>
       </div>
 
-      <div className="rp-compare">
-        <h2>Dónde se frenan las pruebas que no se enviaron</h2>
+      <div className={sectionClass}>
+        <h2 className={sectionTitleClass}>Dónde se frenan las pruebas que no se enviaron</h2>
         {stats.stuck.length === 0 ? (
-          <p className="rp-muted">Todavía no hay pruebas abandonadas o a medias.</p>
+          <p className={mutedTextClass}>Todavía no hay pruebas abandonadas o a medias.</p>
         ) : (
-          <table className="rp-table">
+          <table className={tableClass}>
             <thead>
               <tr>
                 <th>Paso</th>
@@ -635,7 +663,7 @@ function Summary({ stats, onOpen }: { stats: Stats; onOpen: (insight: Insight) =
               {stats.stuck.map((row) => (
                 <tr
                   key={`${row.variantKey}-${row.label}`}
-                  className="rp-row-link"
+                  className="cursor-pointer [&:focus-visible_td]:bg-violet-500/12 [&:hover_td]:bg-violet-500/12"
                   tabIndex={0}
                   onClick={() =>
                     onOpen({
@@ -681,29 +709,37 @@ function DataTable({
   onClearDetail: () => void;
 }) {
   return (
-    <section ref={detailRef} className="rp-section" aria-label={table.title}>
-      <div className="rp-section-head">
+    <section ref={detailRef} className={sectionClass} aria-label={table.title}>
+      <div className="mb-3 flex items-start justify-between gap-4">
         <div>
-          <h2>{table.title}</h2>
-          <p>{table.description}</p>
+          <h2 className={sectionTitleClass}>{table.title}</h2>
+          <p className={mutedTextClass}>{table.description}</p>
           {detailLabel ? (
-            <p className="rp-detail">
+            <p className="flex flex-wrap items-center gap-[0.6rem] leading-normal text-nc-muted">
               Detalle: {detailLabel}
-              <button type="button" onClick={onClearDetail}>
+              <button
+                type="button"
+                className="cursor-pointer rounded-full border border-nc-border bg-transparent px-[0.55rem] py-[0.2rem] text-[0.78rem] text-nc-muted"
+                onClick={onClearDetail}
+              >
                 Ver todo
               </button>
             </p>
           ) : null}
         </div>
-        <button type="button" className="rp-download" onClick={() => downloadCsv(table)}>
+        <button
+          type="button"
+          className="flex-none cursor-pointer rounded-lg border border-cyan-400/35 bg-transparent px-3 py-[0.45rem] text-[0.82rem] text-cyan-300"
+          onClick={() => downloadCsv(table)}
+        >
           Descargar Excel
         </button>
       </div>
       {table.rows.length === 0 ? (
-        <p className="rp-muted">Todavía no hay datos en esta tabla.</p>
+        <p className={mutedTextClass}>Todavía no hay datos en esta tabla.</p>
       ) : (
-        <div className="rp-table-wrap">
-          <table className="rp-table">
+        <div className="overflow-x-auto">
+          <table className={tableClass}>
             <thead>
               <tr>
                 {table.columns.map((column) => (

@@ -64,7 +64,12 @@ export async function getAuthUser(): Promise<AuthUserSummary | null> {
     id: user.id,
     email: user.email ?? "",
     fullName: profileName || metaName || (isAnonymous ? "Invitado" : null),
-    avatarUrl: typeof meta.avatar_url === "string" ? meta.avatar_url : null,
+    avatarUrl:
+      typeof meta.avatar_url === "string"
+        ? meta.avatar_url
+        : typeof meta.picture === "string"
+          ? meta.picture
+          : null,
     isAnonymous,
     role,
     isResearcher: role === "researcher" || role === "admin",

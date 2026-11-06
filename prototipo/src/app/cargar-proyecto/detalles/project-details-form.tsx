@@ -3,6 +3,18 @@
 import { FormEvent, useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { FormCard } from "@/components/form-card";
+import {
+  fieldInputClass,
+  fieldLabelClass,
+  fieldMetaClass,
+  fieldTextareaClass,
+  formErrorClass,
+  formGrid2Class,
+  formGridClass,
+  requiredMarkClass,
+  sectionHeadingClass,
+  sectionIconClass,
+} from "@/components/form-styles";
 import { MultiSelect } from "@/components/multi-select";
 import {
   businessSectors,
@@ -84,6 +96,7 @@ export function ProjectDetailsForm() {
   return (
     <form onSubmit={onSubmit} onChange={touchFormActivity}>
       <FormCard
+        variant="shell"
         backHref="/cargar-proyecto/compania"
         backIconOnly
         continueLabel={submitting ? "Publicando…" : "Publicar Proyecto"}
@@ -91,22 +104,22 @@ export function ProjectDetailsForm() {
         continueDisabled={submitting}
         continueBusy={submitting}
       >
-        <h1 className="section-heading">
-          <span className="section-icon" aria-hidden>
+        <h1 className={sectionHeadingClass}>
+          <span className={sectionIconClass} aria-hidden>
             📄
           </span>
           Detalles del Proyecto
         </h1>
 
-        {error ? <p className="form-error">{error}</p> : null}
+        {error ? <p className={formErrorClass}>{error}</p> : null}
 
-        <div className="form-grid">
-          <label className="field">
-            <span className="field-label">
-              Título del Proyecto<span className="field-required">*</span>
+        <div className={formGridClass}>
+          <label>
+            <span className={fieldLabelClass}>
+              Título del Proyecto<span className={requiredMarkClass}>*</span>
             </span>
             <input
-              className="field-input"
+              className={fieldInputClass}
               type="text"
               maxLength={TITLE_MAX}
               value={form.title}
@@ -116,17 +129,17 @@ export function ProjectDetailsForm() {
               placeholder="ej. Plataforma de E-commerce para PYMES"
               required
             />
-            <p className="field-meta">
+            <p className={fieldMetaClass}>
               {form.title.length}/{TITLE_MAX}
             </p>
           </label>
 
-          <label className="field">
-            <span className="field-label">
-              ¿Qué problema quieres resolver?<span className="field-required">*</span>
+          <label>
+            <span className={fieldLabelClass}>
+              ¿Qué problema quieres resolver?<span className={requiredMarkClass}>*</span>
             </span>
             <input
-              className="field-input"
+              className={fieldInputClass}
               type="text"
               maxLength={PROBLEM_MAX}
               value={form.problem}
@@ -136,17 +149,17 @@ export function ProjectDetailsForm() {
               placeholder="Ej. Reducir abandono en onboarding de usuarios"
               required
             />
-            <p className="field-meta">
+            <p className={fieldMetaClass}>
               {form.problem.length}/{PROBLEM_MAX}
             </p>
           </label>
 
-          <label className="field">
-            <span className="field-label">
-              Descripción del Desafío<span className="field-required">*</span>
+          <label>
+            <span className={fieldLabelClass}>
+              Descripción del Desafío<span className={requiredMarkClass}>*</span>
             </span>
             <textarea
-              className="field-textarea"
+              className={fieldTextareaClass}
               maxLength={DESCRIPTION_MAX}
               rows={6}
               value={form.challengeDescription}
@@ -156,7 +169,7 @@ export function ProjectDetailsForm() {
               placeholder="Ej. Somos una startup B2B SaaS en etapa MVP. Notamos que muchos usuarios abandonan el onboarding antes de completar la primera acción clave..."
               required
             />
-            <p className="field-meta">
+            <p className={fieldMetaClass}>
               {form.challengeDescription.length}/{DESCRIPTION_MAX}
             </p>
           </label>
@@ -176,13 +189,13 @@ export function ProjectDetailsForm() {
             placeholder="Selecciona entregables"
           />
 
-          <div className="form-grid-2">
-            <label className="field">
-              <span className="field-label">
-                Vertical<span className="field-required">*</span>
+          <div className={formGrid2Class}>
+            <label>
+              <span className={fieldLabelClass}>
+                Vertical<span className={requiredMarkClass}>*</span>
               </span>
               <select
-                className="field-select"
+                className={fieldInputClass}
                 value={form.vertical}
                 onFocus={() => viewClassicQuestion("vertical")}
                 onChange={(e) => {
@@ -215,12 +228,12 @@ export function ProjectDetailsForm() {
               placeholder="Selecciona sectores"
             />
 
-            <label className="field">
-              <span className="field-label">
-                Etapa del proyecto<span className="field-required">*</span>
+            <label>
+              <span className={fieldLabelClass}>
+                Etapa del proyecto<span className={requiredMarkClass}>*</span>
               </span>
               <select
-                className="field-select"
+                className={fieldInputClass}
                 value={form.stage}
                 onFocus={() => viewClassicQuestion("stage")}
                 onChange={(e) => {
@@ -238,12 +251,12 @@ export function ProjectDetailsForm() {
               </select>
             </label>
 
-            <label className="field">
-              <span className="field-label">
-                ¿Qué impacto tendría resolver esto?<span className="field-required">*</span>
+            <label>
+              <span className={fieldLabelClass}>
+                ¿Qué impacto tendría resolver esto?<span className={requiredMarkClass}>*</span>
               </span>
               <select
-                className="field-select"
+                className={fieldInputClass}
                 value={form.impact}
                 onFocus={() => viewClassicQuestion("impact")}
                 onChange={(e) => {
