@@ -1,14 +1,22 @@
 import { countries } from "@/lib/countries";
 import {
+  businessSectorGroups,
   businessSectors,
+  deliverableDescriptions,
   deliverables,
+  impactGroups,
   impactOptions,
   organizationSizes,
   organizationTypes,
+  projectStageGroups,
   projectStages,
+  roleGroups,
   roles,
+  toolGroups,
   tools,
+  verticalGroups,
   verticals,
+  type SelectOptionGroup,
 } from "@/lib/form-options";
 import type { ProjectDraft } from "@/lib/form-storage";
 
@@ -68,6 +76,8 @@ export type GuidedStep =
       kind: "select";
       placeholder: string;
       options: readonly string[];
+      /** Si está, se muestra el selector con grupos y descripciones en lugar del nativo. */
+      groups?: readonly SelectOptionGroup[];
     })
   | (StepBase & {
       scope: "project";
@@ -75,6 +85,8 @@ export type GuidedStep =
       kind: "multiselect";
       placeholder: string;
       options: readonly string[];
+      descriptions?: Readonly<Record<string, string>>;
+      groups?: readonly SelectOptionGroup[];
       max: number;
     });
 
@@ -184,12 +196,13 @@ export const guidedSteps: GuidedStep[] = [
     key: "deliverables",
     kind: "multiselect",
     sectionLabel: "Detalles del proyecto",
-    question: "¿Qué esperas que los equipos entreguen?",
+    question: "¿Qué te gustaría recibir al final?",
     hint: "Podés elegir hasta 5.",
     required: true,
     estimatedSeconds: 25,
-    placeholder: "Selecciona entregables",
+    placeholder: "Elegí qué te gustaría recibir",
     options: deliverables,
+    descriptions: deliverableDescriptions,
     max: 5,
   },
   {
@@ -198,11 +211,13 @@ export const guidedSteps: GuidedStep[] = [
     key: "vertical",
     kind: "select",
     sectionLabel: "Detalles del proyecto",
-    question: "¿Cuál es la vertical del proyecto?",
+    question: "¿En qué área necesitás ayuda?",
+    hint: "Elegí la que más se acerque; la revisamos juntos al validar tu desafío.",
     required: true,
     estimatedSeconds: 15,
-    placeholder: "Selecciona una vertical",
+    placeholder: "Elegí la que más se acerque",
     options: verticals,
+    groups: verticalGroups,
   },
   {
     id: "sectors",
@@ -210,12 +225,13 @@ export const guidedSteps: GuidedStep[] = [
     key: "sectors",
     kind: "multiselect",
     sectionLabel: "Detalles del proyecto",
-    question: "¿Qué sectores de negocio abarca?",
-    hint: "Podés elegir hasta 5.",
+    question: "¿A qué se dedica tu organización?",
+    hint: "Podés elegir hasta 5. Si no sabés cuál, buscá con tus palabras, por ejemplo \"restaurante\".",
     required: true,
     estimatedSeconds: 30,
-    placeholder: "Selecciona sectores",
+    placeholder: "Elegí uno o más sectores",
     options: businessSectors,
+    groups: businessSectorGroups,
     max: 5,
   },
   {
@@ -224,11 +240,12 @@ export const guidedSteps: GuidedStep[] = [
     key: "stage",
     kind: "select",
     sectionLabel: "Detalles del proyecto",
-    question: "¿En qué etapa está el proyecto?",
+    question: "¿En qué punto está tu proyecto?",
     required: true,
     estimatedSeconds: 12,
-    placeholder: "Selecciona la etapa",
+    placeholder: "Elegí la que más se acerque",
     options: projectStages,
+    groups: projectStageGroups,
   },
   {
     id: "impact",
@@ -236,11 +253,12 @@ export const guidedSteps: GuidedStep[] = [
     key: "impact",
     kind: "select",
     sectionLabel: "Detalles del proyecto",
-    question: "¿Qué impacto tendría resolver esto?",
+    question: "¿Qué te gustaría lograr al resolverlo?",
     required: true,
     estimatedSeconds: 15,
-    placeholder: "Selecciona el impacto",
+    placeholder: "Elegí el objetivo principal",
     options: impactOptions,
+    groups: impactGroups,
   },
   {
     id: "roles",
@@ -248,12 +266,13 @@ export const guidedSteps: GuidedStep[] = [
     key: "roles",
     kind: "multiselect",
     sectionLabel: "Detalles del proyecto",
-    question: "¿Qué roles te interesan?",
-    hint: "Opcional. Hasta 7.",
+    question: "¿Qué perfiles te gustaría en el equipo?",
+    hint: "Opcional, hasta 7. Si no sabés, dejalo vacío: lo definimos juntos.",
     required: false,
     estimatedSeconds: 25,
-    placeholder: "Selecciona roles",
+    placeholder: "Si no sabés, dejalo vacío",
     options: roles,
+    groups: roleGroups,
     max: 7,
   },
   {
@@ -262,12 +281,13 @@ export const guidedSteps: GuidedStep[] = [
     key: "tools",
     kind: "multiselect",
     sectionLabel: "Detalles del proyecto",
-    question: "¿Qué herramientas te interesan?",
-    hint: "Opcional. Hasta 10.",
+    question: "¿El equipo debería usar alguna herramienta?",
+    hint: "Opcional, hasta 10. Por ejemplo, si tu organización ya usa Excel, Canva o WordPress.",
     required: false,
     estimatedSeconds: 30,
-    placeholder: "Selecciona herramientas",
+    placeholder: "Por ejemplo Excel, Canva o WordPress",
     options: tools,
+    groups: toolGroups,
     max: 10,
   },
 ];

@@ -1,8 +1,16 @@
 "use client";
 
+import { countries, dialCodeForCountry } from "@/lib/countries";
+import { organizationSizes, organizationTypes } from "@/lib/form-options";
+import {
+  loadDraft,
+  markCompanyPrefilled,
+  saveCompany,
+  type CompanyFormData,
+  type ProjectDraft,
+} from "@/lib/form-storage";
+import { GUIDED_STEP_STORAGE_KEY, guidedSteps } from "@/lib/guided-steps";
 import { createClient } from "@/lib/supabase/client";
-import type { ProjectDraft } from "@/lib/form-storage";
-import { guidedSteps } from "@/lib/guided-steps";
 
 export type FormFlowVariant = "classic" | "guided";
 
@@ -11,6 +19,7 @@ export type ExperienceRating = "sencilla" | "neutra" | "frustrante";
 const FORM_SESSION_KEY = "nocountry-form-session-id";
 const DASHBOARD_SESSION_KEY = "nocountry-dashboard-session-id";
 const LAST_STEP_KEY = "nocountry-form-last-step";
+const CONFIRMATION_EMAIL_KEY = "nocountry-confirmation-email";
 
 const classicStepOrder = ["modo", "compania", "detalles", "submit", "post-envio"];
 
@@ -41,7 +50,7 @@ function toError(error: SupabaseError): Error {
   }
   if (error.code === "PGRST205") {
     return new Error(
-      "El comentario todavía no está habilitado en la base. El proyecto igual quedó publicado.",
+      "El comentario todavía no está habilitado en la base. El proyecto igual quedó enviado.",
     );
   }
   return new Error(error.message);
@@ -222,7 +231,66 @@ export async function startFormTestSession(variant: FormFlowVariant) {
     throw toError(eventError);
   }
 
+  if (!guest) {
+    const prefilled = await prefillCompanyFromLastSubmission(supabase, userId).catch(() => false);
+    if (prefilled) {
+      await supabase.from("session_events").insert({
+        session_id: data.id,
+        event_type: "company_prefilled",
+        step_id: "compania",
+        payload: { source: "last_submission" },
+      });
+    }
+  }
+
   return data.id;
+}
+
+/** Descarta valores que ya no existen en las opciones actuales del formulario. */
+function sanitizeCompany(raw: Partial<Record<keyof CompanyFormData, unknown>>): CompanyFormData {
+  const text = (value: unknown) => (typeof value === "string" ? value.trim() : "");
+  const oneOf = (value: unknown, allowed: readonly string[]) =>
+    allowed.includes(text(value)) ? text(value) : "";
+  const country = oneOf(
+    raw.country,
+    countries.map((c) => c.name),
+  );
+  return {
+    companyName: text(raw.companyName),
+    organizationType: oneOf(raw.organizationType, organizationTypes),
+    organizationSize: oneOf(raw.organizationSize, organizationSizes),
+    country,
+    phoneDialCode: dialCodeForCountry(country),
+    phoneNumber: text(raw.phoneNumber),
+  };
+}
+
+/**
+ * Para quien entró con Google: completa la organización con su último envío.
+ * No pisa un borrador en curso. Filtra por usuario porque el equipo de research ve todos los envíos.
+ */
+async function prefillCompanyFromLastSubmission(
+  supabase: ReturnType<typeof createClient>,
+  userId: string,
+): Promise<boolean> {
+  if (loadDraft().company.companyName.trim()) return false;
+
+  const { data, error } = await supabase
+    .from("project_submissions")
+    .select("company, test_sessions!inner(user_id)")
+    .eq("test_sessions.user_id", userId)
+    .order("submitted_at", { ascending: false })
+    .limit(1)
+    .maybeSingle();
+  if (error || !data?.company) return false;
+
+  const company = sanitizeCompany(data.company);
+  if (!company.companyName) return false;
+
+  saveCompany(company);
+  markCompanyPrefilled();
+  sessionStorage.setItem(GUIDED_STEP_STORAGE_KEY, "0");
+  return true;
 }
 
 const answeredClassicQuestions = new Set<string>();
@@ -339,23 +407,22 @@ export function saveGuidedStepProgress(draft: ProjectDraft, stepId: string) {
   });
 }
 
-export async function saveFormCheckpoint(
-  draft: ProjectDraft,
-  stepId: string,
-  captureReason: string,
-) {
+/** Se encola como el resto de las escrituras: quien llama puede avanzar sin esperarla. */
+export function saveFormCheckpoint(draft: ProjectDraft, stepId: string, captureReason: string) {
   const sessionId = formSessionId();
-  if (!sessionId) return;
+  if (!sessionId) return Promise.resolve();
 
-  const { supabase } = await requireUser();
-  const { error } = await supabase.from("form_draft_snapshots").insert({
-    session_id: sessionId,
-    company: draft.company,
-    project: draft.project,
-    step_id: stepId,
-    capture_reason: captureReason,
+  return enqueuePersistence(async () => {
+    const { supabase } = await requireUser();
+    const { error } = await supabase.from("form_draft_snapshots").insert({
+      session_id: sessionId,
+      company: draft.company,
+      project: draft.project,
+      step_id: stepId,
+      capture_reason: captureReason,
+    });
+    if (error) throw toError(error);
   });
-  if (error) throw toError(error);
 }
 
 export async function submitFormTest(draft: ProjectDraft) {
@@ -364,7 +431,7 @@ export async function submitFormTest(draft: ProjectDraft) {
     throw new Error("No hay una sesión de test activa. Volvé a elegir el tipo de formulario.");
   }
 
-  const { supabase, userId } = await requireUser();
+  const { supabase, userId, guest } = await requireUser();
   const { error: submissionError } = await supabase.from("project_submissions").insert({
     session_id: sessionId,
     company: draft.company,
@@ -395,6 +462,28 @@ export async function submitFormTest(draft: ProjectDraft) {
     payload: {},
   });
   sessionStorage.removeItem(LAST_STEP_KEY);
+
+  if (guest) {
+    sessionStorage.removeItem(CONFIRMATION_EMAIL_KEY);
+  } else {
+    sessionStorage.setItem(CONFIRMATION_EMAIL_KEY, "1");
+    requestConfirmationEmail(sessionId);
+  }
+}
+
+/** `keepalive` deja que el pedido termine aunque la pantalla ya haya navegado al éxito. */
+function requestConfirmationEmail(sessionId: string) {
+  void fetch("/api/emails/submission-confirmation", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ sessionId }),
+    keepalive: true,
+  }).catch(() => {});
+}
+
+/** Si el último envío pidió el correo de confirmación (los invitados no tienen correo). */
+export function confirmationEmailRequested() {
+  return typeof window !== "undefined" && sessionStorage.getItem(CONFIRMATION_EMAIL_KEY) === "1";
 }
 
 /** Opinión posterior al envío. No registra un evento: queda fuera del análisis del formulario. */
@@ -426,7 +515,7 @@ export function hasFormSession() {
 export async function saveExperienceFeedback(rating: ExperienceRating, comment: string) {
   const sessionId = formSessionId();
   if (!sessionId) {
-    throw new Error("No encontramos la sesión de este envío. El proyecto igual quedó publicado.");
+    throw new Error("No encontramos la sesión de este envío. El proyecto igual quedó enviado.");
   }
 
   const { supabase } = await requireUser();

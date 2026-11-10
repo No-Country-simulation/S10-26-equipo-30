@@ -27,6 +27,7 @@ export type ProjectDraft = {
 
 export const DRAFT_STORAGE_KEY = "nocountry-project-draft";
 const STORAGE_KEY = DRAFT_STORAGE_KEY;
+const COMPANY_PREFILLED_KEY = "nocountry-company-prefilled";
 
 const emptyCompany = (): CompanyFormData => ({
   companyName: "",
@@ -83,4 +84,14 @@ export function saveProject(data: ProjectFormData) {
 
 export function clearDraft() {
   sessionStorage.removeItem(STORAGE_KEY);
+  sessionStorage.removeItem(COMPANY_PREFILLED_KEY);
+}
+
+/** Marca que los datos de la organización vinieron de la carga anterior. */
+export function markCompanyPrefilled() {
+  sessionStorage.setItem(COMPANY_PREFILLED_KEY, "1");
+}
+
+export function wasCompanyPrefilled() {
+  return typeof window !== "undefined" && sessionStorage.getItem(COMPANY_PREFILLED_KEY) === "1";
 }

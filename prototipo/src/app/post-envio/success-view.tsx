@@ -1,12 +1,14 @@
 "use client";
 
 import { useSearchParams } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useSyncExternalStore } from "react";
 import { formErrorClass } from "@/components/form-styles";
 import { GradientButton } from "@/components/gradient-button";
 import { cx } from "@/lib/cx";
+import { REVIEW_TIME_LABEL } from "@/lib/email/submission-confirmation";
 import { clearDraft } from "@/lib/form-storage";
 import {
+  confirmationEmailRequested,
   hasFormSession,
   isAuthRequired,
   loadExperienceFeedback,
@@ -23,8 +25,18 @@ const experienceOptions: { id: ExperienceRating; emoji: string; label: string; h
 
 const exitLinkClass = "text-[0.85rem] text-nc-muted hover:text-slate-100";
 
+/** El indicador lo deja el envío, antes de llegar a esta pantalla. */
+function subscribeToNothing() {
+  return () => {};
+}
+
 export function SuccessView() {
   const searchParams = useSearchParams();
+  const emailRequested = useSyncExternalStore(
+    subscribeToNothing,
+    confirmationEmailRequested,
+    () => false,
+  );
   const [canComment, setCanComment] = useState(false);
   const [rating, setRating] = useState<ExperienceRating | null>(null);
   const [comment, setComment] = useState("");
@@ -87,7 +99,9 @@ export function SuccessView() {
           Proyecto enviado
         </p>
         <p className="text-[0.78rem] leading-[1.35] text-nc-muted opacity-80">
-          Te enviamos un correo con información sobre los próximos pasos.
+          {emailRequested
+            ? `Te enviamos un correo con el resumen y los próximos pasos. Te escribimos dentro de ${REVIEW_TIME_LABEL} para validarlo juntos.`
+            : `Como entraste como invitado no te llega un correo: seguí el estado desde Mis proyectos. Lo revisamos dentro de ${REVIEW_TIME_LABEL}.`}
         </p>
       </div>
 

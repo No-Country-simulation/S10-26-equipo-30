@@ -1,6 +1,6 @@
 "use client";
 
-import { FormEvent, useEffect, useRef, useState, useSyncExternalStore } from "react";
+import { FormEvent, useEffect, useLayoutEffect, useRef, useState, useSyncExternalStore } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import {
@@ -17,7 +17,9 @@ import {
   requiredMarkClass,
 } from "@/components/form-styles";
 import { GradientButton } from "@/components/gradient-button";
+import { GroupedSelect } from "@/components/grouped-select";
 import { MultiSelect } from "@/components/multi-select";
+import { PrefilledNotice } from "@/components/prefilled-notice";
 import { dialCodeForCountry } from "@/lib/countries";
 import {
   canStayOnStep,
@@ -36,6 +38,7 @@ import {
   loadDraft,
   saveCompany,
   saveProject,
+  wasCompanyPrefilled,
   type CompanyFormData,
   type ProjectDraft,
   type ProjectFormData,
@@ -126,6 +129,9 @@ export function GuidedForm() {
   const session = local ?? (stored === SERVER_SESSION ? null : stored);
   const [error, setError] = useState<string | null>(null);
   const [submitting, setSubmitting] = useState(false);
+
+  // Next conserva esta pantalla oculta al enviar; al volver, el botón no debe seguir en "Enviando…".
+  useLayoutEffect(() => () => setSubmitting(false), []);
   const advanceLock = useRef<number | null>(null);
 
   const stepIndex = session?.stepIndex ?? 0;
@@ -263,7 +269,7 @@ export function GuidedForm() {
     return <div className={formCardShellClass}>Cargando…</div>;
   }
 
-  const continueLabel = isLast ? "Publicar Proyecto" : !step.required && !filled ? "Omitir" : "Continuar";
+  const continueLabel = isLast ? "Enviar a revisión" : !step.required && !filled ? "Omitir" : "Continuar";
 
   return (
     <form onSubmit={onSubmit} onChange={touchFormActivity}>
@@ -307,6 +313,7 @@ export function GuidedForm() {
           {step.hint ? (
             <p className="mb-5 text-[0.92rem] leading-normal text-nc-muted">{step.hint}</p>
           ) : null}
+          {step.scope === "company" && wasCompanyPrefilled() ? <PrefilledNotice /> : null}
           {error ? <p className={formErrorClass}>{error}</p> : null}
           <div id="guided-field">
             <StepField
@@ -335,7 +342,7 @@ export function GuidedForm() {
             </button>
           )}
           <GradientButton type="submit" disabled={!canContinue} busy={submitting}>
-            {submitting ? (isLast ? "Publicando…" : "Guardando…") : continueLabel}
+            {submitting ? (isLast ? "Enviando…" : "Guardando…") : continueLabel}
           </GradientButton>
         </div>
       </div>
@@ -452,6 +459,19 @@ function StepField({
   }
 
   if (step.scope === "project" && step.kind === "select") {
+    if (step.groups) {
+      return (
+        <GroupedSelect
+          label={step.question}
+          hideLabel
+          required={step.required}
+          groups={step.groups}
+          value={draft.project[step.key]}
+          onChange={(value) => onProject(step.key, value)}
+          placeholder={step.placeholder}
+        />
+      );
+    }
     return (
       <select
         className={fieldInputClass}
@@ -477,6 +497,8 @@ function StepField({
         required={step.required}
         optional={!step.required}
         options={step.options}
+        descriptions={step.descriptions}
+        groups={step.groups}
         value={draft.project[step.key]}
         onChange={(value) => onProject(step.key, value)}
         max={step.max}

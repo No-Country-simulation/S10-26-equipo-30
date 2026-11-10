@@ -1,8 +1,10 @@
 "use client";
 
-import { FormEvent, useEffect, useState } from "react";
+import { FormEvent, useEffect, useLayoutEffect, useState } from "react";
 import { useRouter } from "next/navigation";
+import { ClassicStepProgress } from "@/components/classic-step-progress";
 import { FormCard } from "@/components/form-card";
+import { GroupedSelect } from "@/components/grouped-select";
 import {
   fieldInputClass,
   fieldLabelClass,
@@ -17,17 +19,19 @@ import {
 } from "@/components/form-styles";
 import { MultiSelect } from "@/components/multi-select";
 import {
-  businessSectors,
+  businessSectorGroups,
+  deliverableDescriptions,
   deliverables,
-  impactOptions,
-  projectStages,
-  roles,
-  tools,
-  verticals,
+  impactGroups,
+  projectStageGroups,
+  roleGroups,
+  toolGroups,
+  verticalGroups,
 } from "@/lib/form-options";
 import { loadDraft, saveProject, type ProjectFormData } from "@/lib/form-storage";
 import {
   answerClassicQuestion,
+  flushFormPersistence,
   isAuthRequired,
   logFormEvent,
   restartAfterLogin,
@@ -45,6 +49,9 @@ export function ProjectDetailsForm() {
   const [form, setForm] = useState<ProjectFormData>(() => loadDraft().project);
   const [error, setError] = useState<string | null>(null);
   const [submitting, setSubmitting] = useState(false);
+
+  // Next conserva esta pantalla oculta al enviar; al volver, el botón no debe seguir en "Enviando…".
+  useLayoutEffect(() => () => setSubmitting(false), []);
 
   useEffect(() => {
     const draft = loadDraft();
@@ -81,6 +88,7 @@ export function ProjectDetailsForm() {
     setSubmitting(true);
     saveProject(form);
     try {
+      await flushFormPersistence();
       await submitFormTest(loadDraft());
       router.push("/post-envio?enviado=1");
     } catch (cause) {
@@ -99,11 +107,13 @@ export function ProjectDetailsForm() {
         variant="shell"
         backHref="/cargar-proyecto/compania"
         backIconOnly
-        continueLabel={submitting ? "Publicando…" : "Publicar Proyecto"}
+        continueLabel={submitting ? "Enviando…" : "Enviar a revisión"}
         continueType="submit"
         continueDisabled={submitting}
         continueBusy={submitting}
       >
+        <ClassicStepProgress step={2} />
+
         <h1 className={sectionHeadingClass}>
           <span className={sectionIconClass} aria-hidden>
             📄
@@ -161,7 +171,7 @@ export function ProjectDetailsForm() {
             <textarea
               className={fieldTextareaClass}
               maxLength={DESCRIPTION_MAX}
-              rows={6}
+              rows={4}
               value={form.challengeDescription}
               onFocus={() => viewClassicQuestion("description")}
               onChange={(e) => update("challengeDescription", e.target.value)}
@@ -175,9 +185,10 @@ export function ProjectDetailsForm() {
           </label>
 
           <MultiSelect
-            label="¿Qué esperas que los equipos entreguen?"
+            label="¿Qué te gustaría recibir al final?"
             required
             options={deliverables}
+            descriptions={deliverableDescriptions}
             value={form.deliverables}
             onOpen={() => viewClassicQuestion("deliverables")}
             onChange={(v) => {
@@ -186,37 +197,28 @@ export function ProjectDetailsForm() {
               touchFormActivity();
             }}
             max={5}
-            placeholder="Selecciona entregables"
+            placeholder="Elegí qué te gustaría recibir"
           />
 
           <div className={formGrid2Class}>
-            <label>
-              <span className={fieldLabelClass}>
-                Vertical<span className={requiredMarkClass}>*</span>
-              </span>
-              <select
-                className={fieldInputClass}
-                value={form.vertical}
-                onFocus={() => viewClassicQuestion("vertical")}
-                onChange={(e) => {
-                  update("vertical", e.target.value);
-                  answerClassicQuestion("vertical", Boolean(e.target.value));
-                }}
-                required
-              >
-                <option value="">Selecciona una vertical</option>
-                {verticals.map((v) => (
-                  <option key={v} value={v}>
-                    {v}
-                  </option>
-                ))}
-              </select>
-            </label>
+            <GroupedSelect
+              label="¿En qué área necesitás ayuda?"
+              required
+              groups={verticalGroups}
+              value={form.vertical}
+              onOpen={() => viewClassicQuestion("vertical")}
+              onChange={(v) => {
+                update("vertical", v);
+                answerClassicQuestion("vertical", Boolean(v));
+                touchFormActivity();
+              }}
+              placeholder="Elegí la que más se acerque"
+            />
 
             <MultiSelect
-              label="Sector/es de negocio"
+              label="¿A qué se dedica tu organización?"
               required
-              options={businessSectors}
+              groups={businessSectorGroups}
               value={form.sectors}
               onOpen={() => viewClassicQuestion("sectors")}
               onChange={(v) => {
@@ -225,59 +227,41 @@ export function ProjectDetailsForm() {
                 touchFormActivity();
               }}
               max={5}
-              placeholder="Selecciona sectores"
+              placeholder="Elegí uno o más sectores"
             />
 
-            <label>
-              <span className={fieldLabelClass}>
-                Etapa del proyecto<span className={requiredMarkClass}>*</span>
-              </span>
-              <select
-                className={fieldInputClass}
-                value={form.stage}
-                onFocus={() => viewClassicQuestion("stage")}
-                onChange={(e) => {
-                  update("stage", e.target.value);
-                  answerClassicQuestion("stage", Boolean(e.target.value));
-                }}
-                required
-              >
-                <option value="">Selecciona la etapa</option>
-                {projectStages.map((s) => (
-                  <option key={s} value={s}>
-                    {s}
-                  </option>
-                ))}
-              </select>
-            </label>
+            <GroupedSelect
+              label="¿En qué punto está tu proyecto?"
+              required
+              groups={projectStageGroups}
+              value={form.stage}
+              onOpen={() => viewClassicQuestion("stage")}
+              onChange={(v) => {
+                update("stage", v);
+                answerClassicQuestion("stage", Boolean(v));
+                touchFormActivity();
+              }}
+              placeholder="Elegí la que más se acerque"
+            />
 
-            <label>
-              <span className={fieldLabelClass}>
-                ¿Qué impacto tendría resolver esto?<span className={requiredMarkClass}>*</span>
-              </span>
-              <select
-                className={fieldInputClass}
-                value={form.impact}
-                onFocus={() => viewClassicQuestion("impact")}
-                onChange={(e) => {
-                  update("impact", e.target.value);
-                  answerClassicQuestion("impact", Boolean(e.target.value));
-                }}
-                required
-              >
-                <option value="">Selecciona el impacto</option>
-                {impactOptions.map((i) => (
-                  <option key={i} value={i}>
-                    {i}
-                  </option>
-                ))}
-              </select>
-            </label>
+            <GroupedSelect
+              label="¿Qué te gustaría lograr al resolverlo?"
+              required
+              groups={impactGroups}
+              value={form.impact}
+              onOpen={() => viewClassicQuestion("impact")}
+              onChange={(v) => {
+                update("impact", v);
+                answerClassicQuestion("impact", Boolean(v));
+                touchFormActivity();
+              }}
+              placeholder="Elegí el objetivo principal"
+            />
 
             <MultiSelect
-              label="Roles de interés"
+              label="¿Qué perfiles te gustaría en el equipo?"
               optional
-              options={roles}
+              groups={roleGroups}
               value={form.roles}
               onOpen={() => viewClassicQuestion("roles")}
               onChange={(v) => {
@@ -286,13 +270,13 @@ export function ProjectDetailsForm() {
                 touchFormActivity();
               }}
               max={7}
-              placeholder="Selecciona roles"
+              placeholder="Si no sabés, dejalo vacío"
             />
 
             <MultiSelect
-              label="Tools de interés"
+              label="¿El equipo debería usar alguna herramienta?"
               optional
-              options={tools}
+              groups={toolGroups}
               value={form.tools}
               onOpen={() => viewClassicQuestion("tools")}
               onChange={(v) => {
@@ -301,7 +285,7 @@ export function ProjectDetailsForm() {
                 touchFormActivity();
               }}
               max={10}
-              placeholder="Selecciona herramientas"
+              placeholder="Por ejemplo Excel, Canva o WordPress"
             />
           </div>
         </div>
