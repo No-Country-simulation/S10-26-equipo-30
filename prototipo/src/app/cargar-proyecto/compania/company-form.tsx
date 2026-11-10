@@ -1,6 +1,6 @@
 "use client";
 
-import { FormEvent, useEffect, useState, useSyncExternalStore } from "react";
+import { FormEvent, useEffect, useMemo, useState, useSyncExternalStore } from "react";
 import { useRouter } from "next/navigation";
 import { ClassicStepProgress } from "@/components/classic-step-progress";
 import { FormCard } from "@/components/form-card";
@@ -35,6 +35,7 @@ import {
   touchFormActivity,
   viewClassicQuestion,
 } from "@/lib/research-persistence";
+import { useDraftAutosave } from "@/lib/use-draft-autosave";
 
 /** El indicador solo cambia al iniciar una carga nueva, antes de entrar a esta pantalla. */
 function subscribeToNothing() {
@@ -48,6 +49,8 @@ export function CompanyForm() {
   const [form, setForm] = useState<CompanyFormData>(() => loadDraft().company);
   const [error, setError] = useState<string | null>(null);
   const prefilled = useSyncExternalStore(subscribeToNothing, wasCompanyPrefilled, () => false);
+  const autosaveDraft = useMemo(() => ({ company: form, project: loadDraft().project }), [form]);
+  useDraftAutosave(autosaveDraft, "compania");
 
   useEffect(() => {
     setForm(loadDraft().company);

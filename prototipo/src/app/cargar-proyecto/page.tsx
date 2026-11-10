@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { backLinkClass, formCardClass } from "@/components/form-styles";
 import { GradientButton } from "@/components/gradient-button";
+import { ResumeDraftBanner } from "@/components/resume-draft-banner";
 
 const benefits = [
   "Soluciones reales de varios equipos para tu desafío",
@@ -102,6 +103,8 @@ export default function CargarProyectoPlanPage() {
           ))}
         </ul>
       </header>
+
+      <ResumeDraftBanner />
 
       <div className={formCardClass}>
         <header className="mb-4 flex flex-wrap items-center justify-between gap-4">

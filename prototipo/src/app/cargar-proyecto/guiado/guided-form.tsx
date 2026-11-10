@@ -16,6 +16,7 @@ import {
   phoneRowClass,
   requiredMarkClass,
 } from "@/components/form-styles";
+import { DraftSaveIndicator } from "@/components/draft-save-indicator";
 import { GradientButton } from "@/components/gradient-button";
 import { GroupedSelect } from "@/components/grouped-select";
 import { MultiSelect } from "@/components/multi-select";
@@ -52,6 +53,7 @@ import {
   submitFormTest,
   touchFormActivity,
 } from "@/lib/research-persistence";
+import { useDraftAutosave } from "@/lib/use-draft-autosave";
 
 type GuidedSession = {
   draft: ProjectDraft;
@@ -141,6 +143,8 @@ export function GuidedForm() {
   const isLast = stepIndex === total - 1;
   const filled = isStepFilled(step, draft);
   const canContinue = !step.required || filled;
+
+  useDraftAutosave(session ? session.draft : null, step.id);
 
   useEffect(() => {
     if (!session) return;
@@ -293,9 +297,10 @@ export function GuidedForm() {
           >
             <div className={guidedFillClass} style={{ width: `${progressPercent(stepIndex)}%` }} />
           </div>
-          <p className="mt-[0.85rem] text-xs tracking-[0.08em] text-violet-300 uppercase">
-            {step.sectionLabel}
-          </p>
+          <div className="mt-[0.85rem] flex items-baseline justify-between gap-4">
+            <p className="text-xs tracking-[0.08em] text-violet-300 uppercase">{step.sectionLabel}</p>
+            <DraftSaveIndicator />
+          </div>
         </header>
 
         <div>

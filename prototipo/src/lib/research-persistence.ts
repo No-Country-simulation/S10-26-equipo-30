@@ -3,13 +3,15 @@
 import { countries, dialCodeForCountry } from "@/lib/countries";
 import { organizationSizes, organizationTypes } from "@/lib/form-options";
 import {
+  clearDraft,
   loadDraft,
   markCompanyPrefilled,
   saveCompany,
+  saveProject,
   type CompanyFormData,
   type ProjectDraft,
 } from "@/lib/form-storage";
-import { GUIDED_STEP_STORAGE_KEY, guidedSteps } from "@/lib/guided-steps";
+import { firstIncompleteStep, GUIDED_STEP_STORAGE_KEY, guidedSteps } from "@/lib/guided-steps";
 import { createClient } from "@/lib/supabase/client";
 
 export type FormFlowVariant = "classic" | "guided";
@@ -121,6 +123,72 @@ export function flushFormPersistence(): Promise<void> {
   return persistenceTail;
 }
 
+// ---------------------------------------------------------------------------
+// Autoguardado del borrador (pieza 4: sin borrador no hay recuperación posible)
+// ---------------------------------------------------------------------------
+
+const AUTOSAVE_DELAY_MS = 2_000;
+
+export type DraftSaveStatus = "idle" | "saving" | "saved";
+
+let lastSavedDraftSignature = "";
+let pendingAutosave: { draft: ProjectDraft; stepId: string } | null = null;
+let autosaveTimer: ReturnType<typeof setTimeout> | null = null;
+let draftSaveStatus: DraftSaveStatus = "idle";
+const draftSaveListeners = new Set<() => void>();
+
+function setDraftSaveStatus(status: DraftSaveStatus) {
+  draftSaveStatus = status;
+  draftSaveListeners.forEach((listener) => listener());
+}
+
+export function subscribeToDraftSaveStatus(listener: () => void) {
+  draftSaveListeners.add(listener);
+  return () => {
+    draftSaveListeners.delete(listener);
+  };
+}
+
+export function getDraftSaveStatus() {
+  return draftSaveStatus;
+}
+
+/** Toma el borrador cargado como punto de partida: solo se guardan cambios posteriores. */
+export function primeDraftAutosave(draft: ProjectDraft) {
+  lastSavedDraftSignature = JSON.stringify(draft);
+}
+
+/** Guarda el borrador en la base unos segundos después del último cambio. */
+export function scheduleDraftAutosave(draft: ProjectDraft, stepId: string) {
+  if (!formSessionId()) return;
+  pendingAutosave = { draft, stepId };
+  if (autosaveTimer) clearTimeout(autosaveTimer);
+  autosaveTimer = setTimeout(() => {
+    void flushDraftAutosave("autosave");
+  }, AUTOSAVE_DELAY_MS);
+}
+
+/** Guarda ya lo pendiente (por ejemplo, al ocultar la pestaña). */
+export function flushDraftAutosave(captureReason = "autosave"): Promise<void> {
+  if (autosaveTimer) {
+    clearTimeout(autosaveTimer);
+    autosaveTimer = null;
+  }
+  const pending = pendingAutosave;
+  pendingAutosave = null;
+  if (!pending || JSON.stringify(pending.draft) === lastSavedDraftSignature) {
+    return Promise.resolve();
+  }
+  setDraftSaveStatus("saving");
+  return saveFormCheckpoint(pending.draft, pending.stepId, captureReason).then(
+    () => setDraftSaveStatus("saved"),
+    () => {
+      lastSavedDraftSignature = "";
+      setDraftSaveStatus("idle");
+    },
+  );
+}
+
 function formSessionId() {
   return sessionStorage.getItem(FORM_SESSION_KEY);
 }
@@ -213,6 +281,8 @@ export async function startFormTestSession(variant: FormFlowVariant) {
   }
 
   sessionStorage.setItem(FORM_SESSION_KEY, data.id);
+  lastSavedDraftSignature = "";
+  setDraftSaveStatus("idle");
 
   const { error: eventError } = await supabase.from("session_events").insert([
     {
@@ -244,6 +314,163 @@ export async function startFormTestSession(variant: FormFlowVariant) {
   }
 
   return data.id;
+}
+
+export type ResumeSource = "email" | "aviso";
+
+export class ResumeUnavailableError extends Error {
+  constructor(
+    message: string,
+    readonly alreadySubmitted = false,
+  ) {
+    super(message);
+    this.name = "ResumeUnavailableError";
+  }
+}
+
+function isCompanyComplete(company: Partial<CompanyFormData>) {
+  return Boolean(
+    company.companyName?.trim() &&
+      company.organizationType &&
+      company.organizationSize &&
+      company.country &&
+      company.phoneNumber?.trim(),
+  );
+}
+
+/**
+ * Retoma una carga sin terminar desde su último borrador en la base (misma sesión de test).
+ * Devuelve la ruta del paso donde quedó.
+ */
+export async function resumeFormSession(sessionId: string, source: ResumeSource): Promise<string> {
+  const { supabase, userId } = await requireUser();
+
+  const { data: session } = await supabase
+    .from("test_sessions")
+    .select("id, status, flow_piece, flow_variant")
+    .eq("id", sessionId)
+    .eq("user_id", userId)
+    .maybeSingle();
+  if (!session || session.flow_piece !== "formulario_inicial") {
+    throw new ResumeUnavailableError(
+      "No encontramos este borrador en tu cuenta. Entrá con la misma cuenta con la que empezaste.",
+    );
+  }
+  if (session.status === "submitted") {
+    throw new ResumeUnavailableError("Este desafío ya fue enviado a revisión.", true);
+  }
+
+  const { data: snapshot } = await supabase
+    .from("form_draft_snapshots")
+    .select("company, project, step_id, capture_reason")
+    .eq("session_id", sessionId)
+    .order("captured_at", { ascending: false })
+    .limit(1)
+    .maybeSingle();
+  if (!snapshot) {
+    throw new ResumeUnavailableError("Este borrador ya no tiene datos guardados.");
+  }
+
+  const previousId = formSessionId();
+  if (previousId && previousId !== sessionId) {
+    await supabase
+      .from("test_sessions")
+      .update({ status: "abandoned", completed_at: new Date().toISOString() })
+      .eq("id", previousId)
+      .eq("user_id", userId)
+      .eq("status", "in_progress");
+  }
+  if (session.status !== "in_progress") {
+    await supabase
+      .from("test_sessions")
+      .update({ status: "in_progress", completed_at: null })
+      .eq("id", sessionId)
+      .eq("user_id", userId);
+  }
+
+  clearDraft();
+  saveCompany(snapshot.company);
+  saveProject(snapshot.project);
+  const draft = loadDraft();
+  sessionStorage.setItem(FORM_SESSION_KEY, sessionId);
+  lastSavedDraftSignature = JSON.stringify(draft);
+  setDraftSaveStatus("idle");
+
+  let href: string;
+  let stepId: string;
+  if (session.flow_variant === "guided") {
+    const savedIndex = guidedSteps.findIndex((step) => step.id === snapshot.step_id);
+    const index =
+      savedIndex < 0
+        ? firstIncompleteStep(draft)
+        : Math.min(
+            snapshot.capture_reason === "step_complete" ? savedIndex + 1 : savedIndex,
+            guidedSteps.length - 1,
+          );
+    sessionStorage.setItem(GUIDED_STEP_STORAGE_KEY, String(index));
+    href = "/cargar-proyecto/guiado";
+    stepId = guidedSteps[index].id;
+  } else {
+    const toDetails = snapshot.step_id === "detalles" || isCompanyComplete(draft.company);
+    href = toDetails ? "/cargar-proyecto/detalles" : "/cargar-proyecto/compania";
+    stepId = toDetails ? "detalles" : "compania";
+  }
+  rememberStep(stepId);
+
+  await supabase.from("session_events").insert({
+    session_id: sessionId,
+    event_type: "draft_resumed",
+    step_id: stepId,
+    payload: { source },
+  });
+
+  return href;
+}
+
+export type UnfinishedDraft = {
+  sessionId: string;
+  title: string;
+  companyName: string;
+  savedAt: string;
+};
+
+/** Última carga sin enviar del usuario con borrador guardado, de los últimos días. */
+export async function findUnfinishedDraft(maxAgeDays = 7): Promise<UnfinishedDraft | null> {
+  const { supabase, userId } = await requireUser();
+  const since = new Date(Date.now() - maxAgeDays * 24 * 60 * 60 * 1000).toISOString();
+
+  const { data: sessions } = await supabase
+    .from("test_sessions")
+    .select("id, status")
+    .eq("user_id", userId)
+    .eq("flow_piece", "formulario_inicial")
+    .gte("last_activity_at", since)
+    .order("last_activity_at", { ascending: false })
+    .limit(10);
+  // Lo anterior a un envío ya no cuenta: la persona terminó una carga después.
+  const lastSubmitted = (sessions ?? []).findIndex((session) => session.status === "submitted");
+  const ids = (lastSubmitted < 0 ? (sessions ?? []) : (sessions ?? []).slice(0, lastSubmitted))
+    .map((session) => session.id)
+    .filter((id) => id !== formSessionId());
+  if (ids.length === 0) return null;
+
+  const { data: snapshot } = await supabase
+    .from("form_draft_snapshots")
+    .select("session_id, company, project, captured_at")
+    .in("session_id", ids)
+    .order("captured_at", { ascending: false })
+    .limit(1)
+    .maybeSingle();
+  if (!snapshot) return null;
+
+  const company = (snapshot.company ?? {}) as Partial<CompanyFormData>;
+  const project = (snapshot.project ?? {}) as Partial<ProjectDraft["project"]>;
+  return {
+    sessionId: snapshot.session_id,
+    title: project.title?.trim() ?? "",
+    companyName: company.companyName?.trim() ?? "",
+    savedAt: snapshot.captured_at,
+  };
 }
 
 /** Descarta valores que ya no existen en las opciones actuales del formulario. */
@@ -385,6 +612,7 @@ export function saveGuidedStepProgress(draft: ProjectDraft, stepId: string) {
   const sessionId = formSessionId();
   if (!sessionId) return Promise.resolve();
   const occurredAt = new Date().toISOString();
+  lastSavedDraftSignature = JSON.stringify(draft);
   return enqueuePersistence(async () => {
     const { supabase } = await requireUser();
     const [snapshot, event] = await Promise.all([
@@ -411,6 +639,7 @@ export function saveGuidedStepProgress(draft: ProjectDraft, stepId: string) {
 export function saveFormCheckpoint(draft: ProjectDraft, stepId: string, captureReason: string) {
   const sessionId = formSessionId();
   if (!sessionId) return Promise.resolve();
+  lastSavedDraftSignature = JSON.stringify(draft);
 
   return enqueuePersistence(async () => {
     const { supabase } = await requireUser();

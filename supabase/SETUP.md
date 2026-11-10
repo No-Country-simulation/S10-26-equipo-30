@@ -147,6 +147,21 @@ supabase db push
 
 El repo ya incluye `config.toml` y `migrations/`.
 
+## 9. Recuperación de abandonos (pieza 4)
+
+Correo automático una hora después de que alguien deja un borrador sin enviar, con un enlace para retomarlo en el paso exacto.
+
+1. Aplicá `migrations/20261110120000_recovery_emails.sql` (columnas `recovery_email_status`, `recovery_email_at`, `email_reminders_opt_out` y extensiones `pg_cron` + `pg_net`).
+2. En Vercel cargá como **Secret**: `SUPABASE_SERVICE_ROLE_KEY` (Settings → API) y `CRON_SECRET` (un valor aleatorio largo). También tienen que estar las variables de Resend.
+3. En el SQL Editor guardá en Vault la URL de la app y el mismo `CRON_SECRET`, y programá la tarea: seguí `cron/recovery-emails.sql`.
+4. Para probar a mano (con la app corriendo):
+
+```bash
+curl -X POST https://TU-APP.vercel.app/api/cron/recovery-emails -H "Authorization: Bearer $CRON_SECRET"
+```
+
+La respuesta resume cuántas sesiones evaluó y qué pasó con cada una (`sent`, `skipped_*`, `failed`). Cada sesión se evalúa una sola vez; las que fallaron al enviar se reintentan en la ejecución siguiente. Métricas y lista para el contacto humano: pestaña **Recuperación** del panel.
+
 ## Problemas frecuentes
 
 | Síntoma | Causa probable |

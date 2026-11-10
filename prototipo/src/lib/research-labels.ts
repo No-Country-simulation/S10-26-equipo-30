@@ -52,6 +52,9 @@ const events: Record<string, string> = {
   submit_success: "Envió el proyecto",
   post_envio_view: "Vio la confirmación de envío",
   dashboard_view: "Abrió el tablero de simulación",
+  draft_resumed: "Retomó el borrador",
+  company_prefilled: "Datos de la organización precargados",
+  confirmation_email_sent: "Se le envió la confirmación por correo",
 };
 
 const screens: Record<string, string> = {
@@ -67,6 +70,7 @@ const classicViews = ["modo", "compania", "detalles", "submit", "post-envio"];
 
 const snapshotReasons: Record<string, string> = {
   checkpoint: "Guardado automático",
+  autosave: "Mientras escribía",
   step_complete: "Completó una pregunta",
   screen_complete: "Completó una pantalla",
   submit: "Al enviar",

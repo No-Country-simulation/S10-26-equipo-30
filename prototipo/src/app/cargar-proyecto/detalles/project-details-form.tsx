@@ -1,6 +1,6 @@
 "use client";
 
-import { FormEvent, useEffect, useLayoutEffect, useState } from "react";
+import { FormEvent, useEffect, useLayoutEffect, useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
 import { ClassicStepProgress } from "@/components/classic-step-progress";
 import { FormCard } from "@/components/form-card";
@@ -39,6 +39,7 @@ import {
   touchFormActivity,
   viewClassicQuestion,
 } from "@/lib/research-persistence";
+import { useDraftAutosave } from "@/lib/use-draft-autosave";
 
 const TITLE_MAX = 100;
 const PROBLEM_MAX = 512;
@@ -52,6 +53,9 @@ export function ProjectDetailsForm() {
 
   // Next conserva esta pantalla oculta al enviar; al volver, el botón no debe seguir en "Enviando…".
   useLayoutEffect(() => () => setSubmitting(false), []);
+
+  const autosaveDraft = useMemo(() => ({ company: loadDraft().company, project: form }), [form]);
+  useDraftAutosave(autosaveDraft, "detalles");
 
   useEffect(() => {
     const draft = loadDraft();

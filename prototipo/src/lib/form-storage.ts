@@ -51,6 +51,10 @@ const emptyProject = (): ProjectFormData => ({
   tools: [],
 });
 
+export function emptyProjectDraft(): ProjectDraft {
+  return { company: emptyCompany(), project: emptyProject() };
+}
+
 export function loadDraft(): ProjectDraft {
   if (typeof window === "undefined") {
     return { company: emptyCompany(), project: emptyProject() };

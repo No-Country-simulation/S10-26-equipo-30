@@ -25,6 +25,8 @@ const experienceOptions: { id: ExperienceRating; emoji: string; label: string; h
 
 const exitLinkClass = "text-[0.85rem] text-nc-muted hover:text-slate-100";
 
+const FAQ_URL = "https://www.nocountry.tech/#faq";
+
 /** El indicador lo deja el envío, antes de llegar a esta pantalla. */
 function subscribeToNothing() {
   return () => {};
@@ -102,6 +104,17 @@ export function SuccessView() {
           {emailRequested
             ? `Te enviamos un correo con el resumen y los próximos pasos. Te escribimos dentro de ${REVIEW_TIME_LABEL} para validarlo juntos.`
             : `Como entraste como invitado no te llega un correo: seguí el estado desde Mis proyectos. Lo revisamos dentro de ${REVIEW_TIME_LABEL}.`}
+        </p>
+        <p className="text-[0.78rem] leading-[1.35] text-nc-muted">
+          ¿Te quedaron dudas?{" "}
+          <a
+            href={FAQ_URL}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="font-semibold text-nc-cyan underline-offset-2 hover:underline"
+          >
+            Hacé clic aquí
+          </a>
         </p>
       </div>
 

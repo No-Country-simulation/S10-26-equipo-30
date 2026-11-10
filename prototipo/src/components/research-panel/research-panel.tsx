@@ -5,6 +5,7 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { formErrorClass } from "@/components/form-styles";
 import { cx } from "@/lib/cx";
 import { createClient } from "@/lib/supabase/client";
+import { buildRecoveryView } from "./recovery";
 import {
   asRecord,
   formatDuration,
@@ -44,6 +45,7 @@ type TableId =
   | "envios"
   | "experiencia"
   | "borradores"
+  | "recuperacion"
   | "actividad"
   | "notas"
   | "invitaciones";
@@ -73,6 +75,7 @@ const tabs: { id: TableId; label: string }[] = [
   { id: "experiencia", label: "Experiencia" },
   { id: "actividad", label: "Qué hizo cada persona" },
   { id: "borradores", label: "Borradores" },
+  { id: "recuperacion", label: "Recuperación" },
   { id: "personas", label: "Personas" },
   { id: "notas", label: "Notas" },
   { id: "invitaciones", label: "Invitaciones" },
@@ -97,6 +100,7 @@ export function ResearchPanel() {
   const [notes, setNotes] = useState<Row[]>([]);
   const [invites, setInvites] = useState<Row[]>([]);
   const [feedback, setFeedback] = useState<Row[]>([]);
+  const [resumeEvents, setResumeEvents] = useState<Row[]>([]);
   const [focusEvents, setFocusEvents] = useState<Row[] | null>(null);
 
   useEffect(() => {
@@ -115,8 +119,17 @@ export function ResearchPanel() {
         return;
       }
 
-      const [profileRes, sessionRes, submissionRes, draftRes, eventRes, noteRes, inviteRes, feedbackRes] =
-        await Promise.all([
+      const [
+        profileRes,
+        sessionRes,
+        submissionRes,
+        draftRes,
+        eventRes,
+        noteRes,
+        inviteRes,
+        feedbackRes,
+        resumeRes,
+      ] = await Promise.all([
           supabase.from("profiles").select("*").order("created_at", { ascending: false }),
           supabase.from("test_sessions").select("*").order("started_at", { ascending: false }),
           supabase.from("project_submissions").select("*").order("submitted_at", { ascending: false }),
@@ -128,6 +141,10 @@ export function ResearchPanel() {
             .from("session_experience_feedback")
             .select("*")
             .order("created_at", { ascending: false }),
+          supabase
+            .from("session_events")
+            .select("session_id, payload, created_at")
+            .eq("event_type", "draft_resumed"),
         ]);
 
       if (cancelled) return;
@@ -151,6 +168,7 @@ export function ResearchPanel() {
       setNotes((noteRes.error ? [] : (noteRes.data ?? [])) as Row[]);
       setInvites((inviteRes.error ? [] : (inviteRes.data ?? [])) as Row[]);
       setFeedback((feedbackRes.error ? [] : (feedbackRes.data ?? [])) as Row[]);
+      setResumeEvents((resumeRes.error ? [] : (resumeRes.data ?? [])) as Row[]);
       setLoading(false);
     }
 
@@ -205,7 +223,7 @@ export function ResearchPanel() {
 
   const scope = useMemo(() => {
     if (personId === "all") {
-      return { profiles, sessions, submissions, drafts, events, notes, feedback };
+      return { profiles, sessions, submissions, drafts, events, notes, feedback, resumeEvents };
     }
     const scopedSessions = sessions.filter((session) => String(session.user_id ?? "") === personId);
     const sessionIds = new Set(scopedSessions.map((session) => String(session.id)));
@@ -217,8 +235,9 @@ export function ResearchPanel() {
       events: events.filter((row) => sessionIds.has(String(row.session_id ?? ""))),
       notes: notes.filter((row) => String(row.author_id ?? "") === personId),
       feedback: feedback.filter((row) => sessionIds.has(String(row.session_id ?? ""))),
+      resumeEvents: resumeEvents.filter((row) => sessionIds.has(String(row.session_id ?? ""))),
     };
-  }, [drafts, events, feedback, notes, personId, profiles, sessions, submissions]);
+  }, [drafts, events, feedback, notes, personId, profiles, resumeEvents, sessions, submissions]);
 
   const tables = useMemo<TableView[]>(() => {
     const source = scope;
@@ -233,6 +252,14 @@ export function ResearchPanel() {
         : source.sessions;
     const { submissions, drafts, notes, feedback } = source;
     const events = focusSessionId ? (focusEvents ?? []) : source.events;
+    const recovery = buildRecoveryView({
+      sessions: source.sessions,
+      drafts: source.drafts,
+      events: source.events,
+      resumeEvents: source.resumeEvents,
+      profiles: source.profiles,
+      names,
+    });
     return [
       {
         id: "personas",
@@ -363,6 +390,24 @@ export function ResearchPanel() {
             textField(project, "title"),
           ];
         }),
+      },
+      {
+        id: "recuperacion",
+        title: "Recuperación de abandonos",
+        description: `${recovery.metrics}. La lista muestra a quién conviene escribirle a mano a las 24 h: abandonó después de completar la organización o de pasar 30 s o más en el título, el problema o la descripción, y dejó teléfono o correo. Si la recuperación queda por debajo del 10 % con menos de 5 abandonos por semana, el documento propone pausar el contacto humano y dejar solo el correo +1 h.`,
+        columns: [
+          "Persona",
+          "Organización",
+          "Título",
+          "Correo",
+          "WhatsApp",
+          "Dónde quedó",
+          "Última actividad",
+          "Correo +1 h",
+          "Retomó",
+          "Pregunta sugerida",
+        ],
+        rows: recovery.rows,
       },
       {
         id: "actividad",

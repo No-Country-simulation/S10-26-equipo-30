@@ -1,3 +1,4 @@
+import { DraftSaveIndicator } from "@/components/draft-save-indicator";
 import { guidedFillClass, guidedTrackClass } from "@/components/form-styles";
 
 const CLASSIC_TOTAL_STEPS = 2;
@@ -6,7 +7,10 @@ export function ClassicStepProgress({ step }: { step: number }) {
   const label = `Paso ${step}/${CLASSIC_TOTAL_STEPS}`;
   return (
     <div className="mb-6">
-      <p className="mb-[0.65rem] text-[0.95rem] font-bold tracking-[0.04em] tabular-nums">{label}</p>
+      <div className="mb-[0.65rem] flex items-baseline justify-between gap-4">
+        <p className="text-[0.95rem] font-bold tracking-[0.04em] tabular-nums">{label}</p>
+        <DraftSaveIndicator />
+      </div>
       <div
         className={guidedTrackClass}
         role="progressbar"

@@ -10,7 +10,7 @@ type SubmissionConfirmationInput = {
   myProjectsUrl: string;
 };
 
-function escapeHtml(text: string) {
+export function escapeHtml(text: string) {
   return text
     .replace(/&/g, "&amp;")
     .replace(/</g, "&lt;")
