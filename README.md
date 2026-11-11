@@ -11,4 +11,3 @@ UXFlow - Carga de Proyecto (UX Research)
 | [diseno/](./diseno/) | Figma y exports |
 | [prototipo/](./prototipo/) | Web app para deploy en Vercel (Root Directory: `prototipo`) |
 | [supabase/](./supabase/) | Migraciones Postgres + RLS para sesiones de testing |
-| [scripts/](./scripts/) | Utilidades opcionales |

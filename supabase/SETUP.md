@@ -162,6 +162,23 @@ curl -X POST https://TU-APP.vercel.app/api/cron/recovery-emails -H "Authorizatio
 
 La respuesta resume cuántas sesiones evaluó y qué pasó con cada una (`sent`, `skipped_*`, `failed`). Cada sesión se evalúa una sola vez; las que fallaron al enviar se reintentan en la ejecución siguiente. Métricas y lista para el contacto humano: pestaña **Recuperación** del panel.
 
+## 10. Leads calificados para contacto humano (pieza 4, +24 h)
+
+A las 24 h el sistema no envía nada: una persona del equipo contacta a mano a los abandonos con interés real desde `/panel/leads` y registra el contacto.
+
+1. Aplicá, en este orden y por separado, `migrations/20261111100000_marketing_role.sql` (agrega el rol `marketing`) y `migrations/20261111100100_qualified_leads.sql` (función `can_contact_leads`, tabla `lead_contacts` con RLS y funciones `qualified_leads` y `lead_contact_summary`). Tienen que ir en dos corridas: Postgres no deja usar un valor nuevo de un enum en la misma transacción en la que se agrega.
+2. La persona de marketing entra una vez con Google y después, en el SQL Editor:
+
+```sql
+update public.profiles
+set role = 'marketing'
+where email = 'correo-de-marketing@gmail.com';
+```
+
+`marketing` ve solo la lista de leads y puede registrar contactos. No entra al panel de pruebas ni lee las tablas de research. `researcher` y `admin` también ven la lista. Para sacarle el acceso, volvé el rol a `tester`.
+
+Criterios de la lista: [pieza 4, sección (d).3](../entregables/etapa-2-testing/pieza-4-recuperacion-de-abandonos/pieza-4-recuperacion-de-abandonos.md).
+
 ## Problemas frecuentes
 
 | Síntoma | Causa probable |

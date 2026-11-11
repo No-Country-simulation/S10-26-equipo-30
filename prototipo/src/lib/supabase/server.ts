@@ -52,7 +52,9 @@ export async function getAuthUser(): Promise<AuthUserSummary | null> {
     .eq("id", user.id)
     .maybeSingle();
   const role: AppRole =
-    profile?.role === "researcher" || profile?.role === "admin" ? profile.role : "tester";
+    profile?.role === "researcher" || profile?.role === "admin" || profile?.role === "marketing"
+      ? profile.role
+      : "tester";
   const profileName =
     typeof profile?.full_name === "string" && profile.full_name.trim()
       ? profile.full_name.trim()
@@ -73,5 +75,6 @@ export async function getAuthUser(): Promise<AuthUserSummary | null> {
     isAnonymous,
     role,
     isResearcher: role === "researcher" || role === "admin",
+    canSeeLeads: role === "researcher" || role === "admin" || role === "marketing",
   };
 }

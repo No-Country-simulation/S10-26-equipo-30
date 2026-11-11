@@ -85,8 +85,24 @@ export function AuthControls({ user, supabaseEnabled }: AuthControlsProps) {
         {label}
       </span>
       {user.isResearcher ? (
-        <Link href="/panel" className="px-1.5 py-0.5 text-[0.75rem] font-semibold text-nc-cyan">
-          Panel
+        <>
+          <Link href="/panel" className="px-1.5 py-0.5 text-[0.75rem] font-semibold text-nc-cyan">
+            Panel
+          </Link>
+          <Link
+            href="/panel/revision"
+            className="hidden px-1.5 py-0.5 text-[0.75rem] font-semibold text-nc-cyan sm:inline"
+          >
+            Revisión
+          </Link>
+        </>
+      ) : null}
+      {user.canSeeLeads ? (
+        <Link
+          href="/panel/leads"
+          className="px-1.5 py-0.5 text-[0.75rem] font-semibold text-nc-cyan"
+        >
+          Leads
         </Link>
       ) : null}
       <button

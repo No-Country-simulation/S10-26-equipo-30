@@ -22,9 +22,10 @@ async function PanelGate() {
   if (!user) {
     redirect("/login?next=/panel");
   }
-  // El panel es solo para el equipo de research; los testers vuelven al inicio.
+  // El panel es solo para el equipo de research; marketing va a su lista de leads
+  // y los testers vuelven al inicio.
   if (!user.isResearcher) {
-    redirect("/");
+    redirect(user.canSeeLeads ? "/panel/leads" : "/");
   }
   return <ResearchPanel />;
 }

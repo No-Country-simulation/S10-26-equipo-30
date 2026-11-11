@@ -5,6 +5,7 @@ import {
   sessionStatus,
   textField,
 } from "@/lib/research-labels";
+import { labelRecoveryStatus } from "@/lib/qualified-leads";
 
 type Row = Record<string, unknown>;
 
@@ -14,13 +15,6 @@ const BRIEF_STEPS = new Set(["title", "problem", "description"]);
 const BRIEF_MIN_MS = 30_000;
 const WEEK_MS = 7 * 24 * 60 * 60 * 1000;
 
-const recoveryStatusLabels: Record<string, string> = {
-  sent: "Enviado",
-  skipped_no_email: "No: sin correo",
-  skipped_opt_out: "No: pidió la baja",
-  skipped_superseded: "No: empezó otra carga",
-  skipped_no_draft: "No: sin borrador",
-};
 
 function str(value: unknown) {
   return typeof value === "string" ? value : null;
@@ -160,7 +154,7 @@ export function buildRecoveryView({ sessions, drafts, events, resumeEvents, prof
         whatsappLink(company),
         labelStep(stepId, str(session.flow_variant)),
         formatWhen(str(session.last_activity_at)),
-        recoveryStatusLabels[str(session.recovery_email_status) ?? ""] ?? "Pendiente",
+        labelRecoveryStatus(str(session.recovery_email_status)),
         source ? `Sí (${source === "email" ? "correo" : "aviso"})` : "No",
         suggestedQuestion(stepId),
       ];

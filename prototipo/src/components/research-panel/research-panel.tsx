@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useRef, useState, type RefObject } from "react";
+import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import { formErrorClass } from "@/components/form-styles";
 import { cx } from "@/lib/cx";
@@ -325,6 +326,8 @@ export function ResearchPanel() {
         columns: [
           "Persona",
           "Enviado el",
+          "Score",
+          "Banda",
           "Tiempo hasta enviar",
           "Compañía",
           "País",
@@ -336,9 +339,15 @@ export function ResearchPanel() {
           const company = asRecord(submission.company);
           const project = asRecord(submission.project);
           const session = sessionById.get(String(submission.session_id ?? ""));
+          const score =
+            typeof submission.pre_submit_score === "number" ? String(submission.pre_submit_score) : "—";
+          const band =
+            typeof submission.pre_submit_band === "string" ? submission.pre_submit_band : "—";
           return [
             personForSession(submission.session_id),
             formatWhen(typeof submission.submitted_at === "string" ? submission.submitted_at : null),
+            score,
+            band,
             formatDuration(
               typeof session?.started_at === "string" ? session.started_at : null,
               typeof submission.submitted_at === "string" ? submission.submitted_at : null,
@@ -394,7 +403,7 @@ export function ResearchPanel() {
       {
         id: "recuperacion",
         title: "Recuperación de abandonos",
-        description: `${recovery.metrics}. La lista muestra a quién conviene escribirle a mano a las 24 h: abandonó después de completar la organización o de pasar 30 s o más en el título, el problema o la descripción, y dejó teléfono o correo. Si la recuperación queda por debajo del 10 % con menos de 5 abandonos por semana, el documento propone pausar el contacto humano y dejar solo el correo +1 h.`,
+        description: `${recovery.metrics}. La lista muestra todos los abandonos con señales de interés: completó la organización o pasó 30 s o más en el título, el problema o la descripción, y dejó teléfono o correo. Para el contacto a mano de las 24 h usá la página Leads calificados (/panel/leads): filtra los que ya pasaron 24 h, saca a quien empezó otra carga o pidió la baja, y deja registrar el contacto. Si la recuperación queda por debajo del 10 % con menos de 5 abandonos por semana, el documento propone pausar el contacto humano y dejar solo el correo +1 h.`,
         columns: [
           "Persona",
           "Organización",
@@ -504,6 +513,14 @@ export function ResearchPanel() {
           {fullView
             ? "Estás viendo las pruebas de todo el equipo. Los números de abajo sirven para comparar el formulario clásico con las preguntas guiadas."
             : "Estás viendo solo tus pruebas. Para analizar las de todas las personas, alguien del equipo tiene que marcarte como investigador en la base."}
+        </p>
+        <p className="mt-3 flex flex-wrap gap-x-4 gap-y-1 text-[0.85rem]">
+          <Link href="/panel/revision" className="text-nc-cyan">
+            Cola de revisión (score pre-envío) →
+          </Link>
+          <Link href="/panel/leads" className="text-nc-cyan">
+            Leads calificados para contactar a mano →
+          </Link>
         </p>
         <label className="mt-4 flex items-center gap-[0.6rem] text-[0.85rem] text-nc-muted">
           <span>Persona</span>

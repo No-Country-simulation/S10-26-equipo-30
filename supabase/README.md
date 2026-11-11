@@ -81,6 +81,8 @@ where email = 'tu-email@dominio.com';
 
 Los roles `researcher` y `admin` pueden leer todas las sesiones y escribir `moderation_notes` (RLS).
 
+El rol `marketing` (pieza 4) solo ve la lista de leads calificados en `/panel/leads` y registra contactos en `lead_contacts`. Ver [SETUP.md, sección 10](./SETUP.md#10-leads-calificados-para-contacto-humano-pieza-4-24-h).
+
 ## Allowlist (opcional)
 
 ```sql

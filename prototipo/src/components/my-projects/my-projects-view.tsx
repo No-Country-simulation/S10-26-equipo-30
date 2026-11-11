@@ -6,12 +6,8 @@ import { formErrorClass } from "@/components/form-styles";
 import { cx } from "@/lib/cx";
 import { createClient } from "@/lib/supabase/client";
 import { asRecord, textField } from "@/lib/research-labels";
-import {
-  projectStatusLabel,
-  type MyProject,
-  type ProjectPlan,
-  type ProjectStatus,
-} from "@/lib/my-projects-data";
+import { type MyProject, type ProjectPlan, type ProjectStatus } from "@/lib/my-projects-data";
+import { labelReviewStatus, type ReviewWorkflowStatus } from "@/lib/submission-review-status";
 
 type PlanFilter = "all" | ProjectPlan;
 type QuickFilter = "all" | ProjectStatus;
@@ -25,6 +21,10 @@ const toolbarControlClass =
   "w-full rounded-[0.55rem] border border-nc-border bg-[rgba(7,11,18,0.65)] px-3 py-2 text-[0.85rem] text-slate-100";
 
 const moreLinkClass = "cursor-pointer border-0 bg-transparent text-[0.88rem] text-slate-300";
+
+function mapReviewToListStatus(value: string | null | undefined): ProjectStatus {
+  return value === "aprobado" ? "active" : "pending";
+}
 
 export function MyProjectsView() {
   const [query, setQuery] = useState("");
@@ -55,7 +55,7 @@ export function MyProjectsView() {
       const [submissionRes, sessionRes, profileRes] = await Promise.all([
         supabase
           .from("project_submissions")
-          .select("id, session_id, company, project")
+          .select("id, session_id, company, project, review_status")
           .order("submitted_at", { ascending: false }),
         supabase.from("test_sessions").select("id, user_id"),
         supabase.from("profiles").select("id, full_name, email, role"),
@@ -95,6 +95,7 @@ export function MyProjectsView() {
         session_id: string;
         company: unknown;
         project: unknown;
+        review_status?: string | null;
       }[]).map((row) => {
         const project = asRecord(row.project);
         const company = asRecord(row.company);
@@ -111,7 +112,11 @@ export function MyProjectsView() {
               : textField(project, "challengeDescription") !== "—"
                 ? textField(project, "challengeDescription")
                 : "Sin descripción",
-          status: "pending" as const,
+          status: mapReviewToListStatus(row.review_status),
+          reviewStatus:
+            (typeof row.review_status === "string"
+              ? row.review_status
+              : "en_revision") as ReviewWorkflowStatus,
           plan: "free" as const,
           sectors: stringList(project.sectors),
           verticals: vertical === "—" ? [] : [vertical],
@@ -233,7 +238,7 @@ export function MyProjectsView() {
               key={project.id}
               project={project}
               expanded={expandedId === project.id}
-              trailHref={fullView ? `/panel?sesion=${project.sessionId}` : null}
+              trailHref={fullView ? `/panel/revision/${project.id}` : null}
               onToggle={() =>
                 setExpandedId((current) => (current === project.id ? null : project.id))
               }
@@ -299,7 +304,7 @@ function ProjectCard({
               : "bg-yellow-400/16 text-amber-200",
           )}
         >
-          {projectStatusLabel[project.status]}
+          {labelReviewStatus(project.reviewStatus)}
         </span>
       </div>
       <p

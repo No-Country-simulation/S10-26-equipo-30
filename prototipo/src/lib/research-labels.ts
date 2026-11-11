@@ -38,6 +38,7 @@ const roles: Record<string, string> = {
   tester: "Participante",
   researcher: "Equipo de research",
   admin: "Administración",
+  marketing: "Marketing",
 };
 
 const events: Record<string, string> = {
@@ -55,6 +56,7 @@ const events: Record<string, string> = {
   draft_resumed: "Retomó el borrador",
   company_prefilled: "Datos de la organización precargados",
   confirmation_email_sent: "Se le envió la confirmación por correo",
+  approval_email_sent: "Se envió el correo de aprobación (pieza 6)",
 };
 
 const screens: Record<string, string> = {
@@ -190,6 +192,18 @@ export function formatWhen(value: string | null | undefined) {
   return new Intl.DateTimeFormat("es-AR", {
     dateStyle: "short",
     timeStyle: "short",
+  }).format(date);
+}
+
+/** Fecha y hora de Argentina, sin importar la zona del navegador de quien mira. */
+export function formatWhenArgentina(value: string | null | undefined) {
+  if (!value) return "—";
+  const date = new Date(value);
+  if (Number.isNaN(date.getTime())) return value;
+  return new Intl.DateTimeFormat("es-AR", {
+    dateStyle: "short",
+    timeStyle: "short",
+    timeZone: "America/Buenos_Aires",
   }).format(date);
 }
 

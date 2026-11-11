@@ -99,11 +99,32 @@ Propuesta alineada a fricciones de pieza 2 y a la pieza 3 (trato humano):
 - Un CTA: **Continuar formulario**.
 - Mencionar **revisión gratuita**, no “publicar”.
 
-### 3. WhatsApp / email firmado +24 h (operación ligera)
-- Lista diaria de abandonos calificados para volunteer del programa.
-- Script: ofrecer ayuda con **una** pregunta concreta según último paso (sectores vs brief).
+### 3. Contacto persona a persona +24 h (operación ligera)
+
+**Decisión:** a las 24 h el sistema **no envía nada**. Como no conocemos las políticas de privacidad de No Country, el segundo toque es **de persona a persona**: un colaborador de marketing ve la lista de leads calificados y los contacta por el canal que considere correcto (WhatsApp, correo personal, llamada, LinkedIn…). El único envío automático sigue siendo el correo +1 h.
+
+- **Vista de leads calificados** en el prototipo: `/panel/leads`. La ven solo los roles `marketing`, `researcher` y `admin`; la base vuelve a chequear el rol en cada consulta (función `public.qualified_leads()`), así que el rol `marketing` no tiene acceso a las tablas de research.
+- **Quién entra en la lista:**
+  - Formulario inicial **sin enviar**, con borrador guardado.
+  - Última actividad hace **más de 24 h y menos de 7 días** (el mismo tope de 7 días del correo +1 h).
+  - **No empezó otra carga** después (si empezó otra, cuenta la más nueva).
+  - Cuenta **identificada** con correo; los invitados quedan afuera.
+  - **No pidió la baja** de los recordatorios (`email_reminders_opt_out`). Si la pidió, queda fuera de la lista aunque el contacto sea por otro canal.
+- **Interés real** (reglas de la sección c):
+  - **Completó la organización:** nombre, teléfono (6 dígitos o más), tipo y tamaño, o terminó la pantalla de organización del formulario clásico.
+  - **O llegó al brief:** escribió el problema o la descripción del desafío (20 caracteres o más), o pasó **30 s o más** en la pregunta de problema o descripción del formulario guiado. No hay medición de tiempo por campo en el formulario clásico: ahí el brief cuenta por el texto escrito. El tiempo del guiado se aproxima con los eventos `step_view`: va desde que se abre la pregunta hasta el registro siguiente.
+  - **Y es contactable:** dejó teléfono o tiene el correo de su cuenta.
+  - El checkbox de “solo probando” no existe todavía; si se agrega, se suma como exclusión.
+- **Orden:** primero los que nadie contactó y, dentro de ellos, los de más interés. El interés suma un punto por señal (organización completa, brief escrito, 30 s o más en el brief, teléfono, retomó el borrador; máximo 5).
+- **Qué muestra cada lead:** nombre y correo de la cuenta, organización, teléfono con código de país, título del proyecto, último paso, última actividad en hora de Argentina, estado del correo +1 h y una **pregunta sugerida** como guía.
+- **Script:** **una** pregunta concreta según el último paso:
+  - **Brief** (quedó en la organización, el título, el problema o la descripción, o en la pantalla de detalles sin escribir el problema): *“¿Te trabó contar el problema o describir el desafío? Si querés, contámelo con tus palabras y te ayudo a escribirlo para enviarlo a revisión.”*
+  - **Sectores** (ya escribió el brief y quedó en entregables, área, sectores, etapa, impacto, roles o herramientas): *“¿Te trabó elegir el área o los sectores del proyecto? Te ayudo a definirlos en un par de minutos.”*
+  - Siempre “enviar a revisión”, nunca “publicar”.
+- **Registro del contacto:** el colaborador marca el lead como contactado con el canal (texto libre), el resultado (sin respuesta, respondió, va a retomar, no le interesa, otro) y una nota. Queda en la tabla `lead_contacts` con quién y cuándo; solo la leen y escriben `marketing`, `researcher` y `admin`.
 
 ### 4. Métricas (30 días piloto)
+- La vista de leads muestra los contactados en los últimos 30 días y cuántos **retomaron** el borrador o **enviaron** un proyecto después del contacto (`public.lead_contact_summary()`).
 - Tasa retorno borrador (click → envío).
 - Abandonos/semana vs recuperados.
 - Si recuperación < 10 % y volumen < 5/semana → pausar +24 h humano y mantener solo +1 h.

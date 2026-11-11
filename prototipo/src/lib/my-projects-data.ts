@@ -1,3 +1,5 @@
+import type { ReviewWorkflowStatus } from "@/lib/submission-review-status";
+
 export type ProjectPlan = "free" | "starter";
 export type ProjectStatus = "pending" | "active";
 
@@ -6,6 +8,8 @@ export type MyProject = {
   title: string;
   description: string;
   status: ProjectStatus;
+  /** Estado operativo de revisión guardado en Supabase. */
+  reviewStatus: ReviewWorkflowStatus;
   plan: ProjectPlan;
   sectors: string[];
   verticals: string[];
