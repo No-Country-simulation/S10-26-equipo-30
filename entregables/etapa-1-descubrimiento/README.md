@@ -7,7 +7,7 @@ Entregables de la fase de descubrimiento del flujo **Cargar proyecto** (UXFlow �
 | Recurso | Descripción | Enlace |
 |---------|-------------|--------|
 | Journey map (Figma) | Tablero del journey en No Country | [Journey map · Figma](https://www.figma.com/board/Zgd67dINRVwygOc0GJd3n1/Journey-map-No-country?node-id=115-275&t=Dsanmxl8U1al0xB1-0) |
-| Mapa de motivaciones y fricciones | Síntesis por perfil (Raquel, Adriana, Carlos, Martín, Ezequiel) | [Ver en el repo](./mapa-motivaciones-fricciones.md) · [Ver en GitHub](https://github.com/No-Country-simulation/S10-26-equipo-30/blob/main/entregables/etapa-1-descubrimiento/mapa-motivaciones-fricciones.md) |
+| Mapa de motivaciones y fricciones | Síntesis por perfil (Raquel, Adriana, Carlos, Martín, Ezequiel) | [Ver en GitHub](https://github.com/No-Country-simulation/S10-26-equipo-30/blob/main/entregables/etapa-1-descubrimiento/mapa-motivaciones-fricciones.md) |
 
 ## Relación con Etapa 2
 
