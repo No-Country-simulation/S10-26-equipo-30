@@ -1,0 +1,124 @@
+[Orador 2]
+Unas preguntas, porque usted participó en el 2024, ¿puede ser?
+
+[Orador 1]
+Sí, varias veces participé, sí, sí. 2024 fue una, el año pasado hicimos otra creo, antes también, así que sí.
+
+[Orador 2]
+Ah, entonces varias veces, genial.
+
+[Orador 1]
+Y tres veces te podría decir, dos seguro, no sé, a lo mejor dos y tres.
+
+[Orador 2]
+Bien, entonces, y más o menos, ¿de qué serían las actividades que ustedes utilizaron? ¿Cómo fue su experiencia en No Country?
+
+[Orador 1]
+Nosotros lo que hicimos siempre fue presentar desafíos relacionados con Casa Justina, con lo que hacemos en Casa Justina, porque Casa Justina tiene un capítulo que es innovación. Bien. Entonces, y ahí en ese capítulo llevamos adelante proyectos de robótica, de traslado de órganos con drones, inteligencia artificial, bueno, de todo.
+
+Y planteábamos desafíos que existían en ese momento, bueno, algunos se creen existen, relacionados con la tecnología de traslado. Para que con tecnología veamos cómo lo podemos resolver.
+
+[Orador 2]
+Perfecto. Entonces, ¿qué necesitaba ver usted como decisor, se le llama acá en No Country, antes de cargar un desafío? O sea, ¿en qué etapas?
+
+[Orador 1]
+Armamos una especie de brief, o de assessment, para que los equipos que lo fueran a leer comprendieran el desafío y a partir de ahí tuviesen herramientas para poder pensar en una solución.
+
+[Orador 2]
+Ah, entonces ahí entra en este brief el formato en que ustedes planteaban ese problema. Sí. Perfecto.
+
+Y respecto a la carga que tenían en estos de los brief, ¿ustedes cómo conocieron No Country y empezaron a participar?
+
+[Orador 1]
+¿Cómo conocí No Country? Sí, me puse en contacto con Leandro y a partir del contacto con Leandro, bueno, empezamos a pensar en qué cosas podíamos hacer juntos y surgieron esos desafíos.
+
+[Orador 2]
+OK. ¿Y usted no tuvo ningún problema nunca en respecto a la página para cargar el brief para los estudiantes? No sé si les podían hacer preguntas también.
+
+[Orador 1]
+No recuerdo si cargamos nosotros la información o se la enviamos a Leandro y él se la pasó a los equipos, la verdad. No me acuerdo de estar cargando yo información, ¿sabés? Sí, por supuesto.
+
+Después me acuerdo de hacer el seguimiento de los proyectos que estaban involucrados, interesados, primero interesados y después involucrados con el desafío y era bastante intuitivo el seguimiento de los proyectos.
+
+[Orador 2]
+Bien. Bueno, genial. Eso es importante.
+
+Y, bueno, esto que ustedes le hacían un seguimiento a los participantes en el desafío, ¿cómo los podían ayudar ustedes? ¿Qué veían dentro de eso si estaban activos constantemente en la simulación o directamente vieron el producto final? ¿Cómo fueron partícipes dentro?
+
+[Orador 1]
+Había unas instancias de... Siempre hubo una o dos instancias de preguntas y respuestas en un bit o en una videollamada con los equipos utilizados y no había una asincronicidad frecuente o armada de tal forma que uno estuviese enterado de las preguntas que se hacían a la voz del individuo. Sí tenías una cierta visibilidad del avance de los equipos en cuanto a si habían leído el material o si estaban desarrollando la idea o algo así.
+
+Era bastante amigable la información. Yo por lo menos tenía que recurrir a Leandro para comprender mejor el estado de avance de los equipos. No era suficiente en ese momento lo que me decía la plataforma y el espacio que tenía armado.
+
+Era muy simple, muy básica el proyecto. Había como una lista de ítems, cada ítem era un grupo y en un acuerdo muy poco parámetro o variable o indicador explícito de en qué estado estaba el equipo. Era como muy sencillo, leyeron, desarrollando, no me acuerdo si había algún color y yo no podía contactar con los equipos, no podía hacerles preguntas.
+
+Lo cual también me parecía... no había una interacción. Yo sé que fue un desafío, pero saber si los equipos lo leyeron, si tienen dudas.
+
+No, ellos te van a avisar. Bueno, pero nadie me mandó nada. No, bueno, tendría que haberte mandado.
+
+Igual te van a hacer preguntas en la reunión de videollamadas. Y la reunión de videollamadas, por ahí participaban. Recuerdo que la primera vez, era un número interesante, digo interesante porque eran unas 20 o 25 personas y preguntaron dos o tres y había algunas con videos apagados, lo cual me pareció también muy...
+
+Yo particularmente, me resulta una falta de respeto estar en un lugar videollamada con videos apagados.
+
+[Orador 2]
+Totalmente.
+
+[Orador 1]
+Por supuesto que siempre podés tener algún motivo, pero aunque estés en el auto, prender el video para... no pretendo que estés con el video mirando, no, pero para que yo sepa, o avísame que estás manejando, o avísame que estás en la cama hecho mierda y no te lo querés perder por las dudas, o avísame que tenés a tu hijo en la falda y no podés sacártelo, o prefiero verte con tu hijo en la falda y que no tiene nada que ver. Entonces, eso, ¿no?
+
+Y te doy toda esta coyuntura porque, en definitiva, el resultado final... Nosotros tuvimos, yo tengo un MVP de un proyecto de una plataforma con inteligencia artificial que lo desarrollamos con Don Kante y yo estoy muy contento con lo que se desarrolló. Sin embargo, el camino para que ese desarrollo sucediera llegó a las finales, llegaron a las finales 12, construimos cuatro equipos y la verdad que...
+
+[Orador 2]
+Ah, de los 20 llegaron tres nomás. ¿Cómo? De los 20 llegaron 13.
+
+[Orador 1]
+Sí, no, eran 20 equipos, eran 20 personas. No me acuerdo cuántos equipos, eran siete o seis, no me acuerdo. A la final llegaron tres o cuatro y el outcome, realmente considerando el camino, el outcome fue muy bueno.
+
+Superó mis expectativas que yo veía, lo que te estoy contando y tenía unas expectativas muy grandes. Sin embargo, el outcome fue muy bueno. Eso debo reconocer.
+
+Y de hecho, hoy, la plataforma que tenemos, el MVP anterior fue hecho con Don Kante, el MVP posterior lo mejoramos con un equipo de programas y el anterior lo hicimos con Don Kante. Entonces, el outcome fue muy bueno. La experiencia no es que fue mala, o sea, de uno a diez, la experiencia del camino fue un cuatro, un cinco.
+
+Pero por esto que te digo, porque... ¿Vos sos del mundo de la tecnología, del desarrollo del software y demás?
+
+[Orador 2]
+No, mis compañeros sí, pero yo estoy en otra área.
+
+[Orador 1]
+Bueno, en el mundo del desarrollo del software es muy importante la interacción con el usuario porque yo te puedo pedir que me hagas una casa española con techos altos y ventanas coloniales y si vos me estás haciendo una casa como la que tenés de fondo y no me entendiste, o yo no me explique bien. Y entonces, si vos estás haciendo los cimientos y ya estás armando las paredes a la derecha que tenés y las vigas esas, digo, no, pará, pará, pará, no es lo que yo te pedí. Cambiemos porque si no va mal.
+
+Y tenés que... el scroun, no importa nada la tecnología, el scroun, una de las intenciones es esa, viste, de estar... Entonces, bueno, eso fue muy pobre.
+
+El resultado fue espectacular. Considerando lo pobre del camino, fue espectacular el resultado.
+
+[Orador 2]
+Ok. Bien. Sí, nosotros estamos ahora...
+
+Nuestro proyecto nos tocó sobre No Country y queremos ver todo este trayecto que es lo que me decís de cómo estuvo pobre poder impulsarlo para que en vez de que sea un 4 o un 5 llegue a una nota más alta.
+
+[Orador 1]
+Y una aclaración. Entiendo que lo que estamos revisando justamente es la experiencia del usuario. Sin embargo, debo aclarar que para mí el modelo de No Country me encanta.
+
+La idea de No Country me encanta. Está muy buena. Sin embargo, si vos con una muy buena idea no tenés o no...
+
+Porque aparte está esto, más allá de que el usuario pueda estar más contento o no, porque por ahí otro usuario te dice no, mejor que no me rompas las pelotas. Viste, qué sé yo. Yo le tomo la idea y dentro de dos meses me traen la idea.
+
+Y puede estar chocho porque no le rompieron las bolas y... Yo opino de otra manera. Aprovechense mutuamente tanto el equipo que está desarrollando para crear todo el buen usuario como el usuario para que aún...
+
+Imagínate lo que hubiese sido si la interacción hubiese sido más rica. El outcome hubiese sido mucho mejor. Definitivamente.
+
+Y fue muy bueno. Entonces es bueno eso, viste.
+
+[Orador 2]
+Bien. Entonces eso quiere decir que volverías a cargar sin dudas un proyecto, un desafío en los próximos siglos. Sí, correcto.
+
+Bueno. Perfecto, Ezequiel. No te tomo más de tu tiempo.
+
+Ya tengo todo y muchísimo más de lo que esperaba.
+
+[Orador 1]
+Ah, bueno, me alegro, sí. Bueno, cualquier cosa me volvés a avisar o me mandás preguntas, ¿vale?
+
+[Orador 2]
+Sí, por favor.
+
+(Transcrito por TurboScribe. Actualizar a Ilimitado para eliminar este mensaje.)
