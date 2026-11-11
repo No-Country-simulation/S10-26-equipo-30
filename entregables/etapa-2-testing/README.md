@@ -6,14 +6,14 @@ Decisiones de diseño del flujo **Cargar proyecto** (UXFlow · equipo 30), una *
 
 ## Índice de piezas
 
-| # | Pieza | Pregunta guía (resumen) | Entregable | En GitHub |
-|---|--------|-------------------------|------------|-----------|
-| 1 | Dashboard público y propuesta de valor | ¿El inicio convierte en “cargar desafío”? | [pieza-1-dashboard.md](./pieza-1-dashboard/pieza-1-dashboard.md) | [Ver](https://github.com/No-Country-simulation/S10-26-equipo-30/blob/main/entregables/etapa-2-testing/pieza-1-dashboard/pieza-1-dashboard.md) |
-| 2 | Formulario inicial (clásico / guiado) | ¿Qué variante da mejor brief con menos fricción? | [pieza-2-formulario-inicial.md](./pieza-2-formulario-inicial/pieza-2-formulario-inicial.md) | [Ver](https://github.com/No-Country-simulation/S10-26-equipo-30/blob/main/entregables/etapa-2-testing/pieza-2-formulario-inicial/pieza-2-formulario-inicial.md) |
-| 3 | Post-envío y comunicación | ¿Qué necesita ver el decisor para no perder interés? | [pieza-3-post-envio.md](./pieza-3-post-envio/pieza-3-post-envio.md) | [Ver](https://github.com/No-Country-simulation/S10-26-equipo-30/blob/main/entregables/etapa-2-testing/pieza-3-post-envio/pieza-3-post-envio.md) |
-| 4 | Recuperación de abandonos | ¿Recuperamos cargas sin enviar con costo operativo bajo? | [pieza-4-recuperacion-de-abandonos.md](./pieza-4-recuperacion-de-abandonos/pieza-4-recuperacion-de-abandonos.md) | [Ver](https://github.com/No-Country-simulation/S10-26-equipo-30/blob/main/entregables/etapa-2-testing/pieza-4-recuperacion-de-abandonos/pieza-4-recuperacion-de-abandonos.md) |
-| 5 | Contexto adicional (scoring / P2P) | ¿Qué formato da más contexto con menos fricción? | [pieza-5-contexto-adicional.md](./pieza-5-contexto-adicional/pieza-5-contexto-adicional.md) | [Ver](https://github.com/No-Country-simulation/S10-26-equipo-30/blob/main/entregables/etapa-2-testing/pieza-5-contexto-adicional/pieza-5-contexto-adicional.md) |
-| 6 | Aprobación y post-aprobación | ¿El email y el dashboard activo retienen al decisor? | [pieza-6-aprobacion.md](./pieza-6-aprobacion/pieza-6-aprobacion.md) | [Ver](https://github.com/No-Country-simulation/S10-26-equipo-30/blob/main/entregables/etapa-2-testing/pieza-6-aprobacion/pieza-6-aprobacion.md) |
+| # | Pieza | Pregunta guía (resumen) | Entregable |
+|---|--------|-------------------------|------------|
+| 1 | Dashboard público y propuesta de valor | ¿El inicio convierte en “cargar desafío”? | [Ver](https://github.com/No-Country-simulation/S10-26-equipo-30/blob/main/entregables/etapa-2-testing/pieza-1-dashboard/pieza-1-dashboard.md) |
+| 2 | Formulario inicial (clásico / guiado) | ¿Qué variante da mejor brief con menos fricción? | [Ver](https://github.com/No-Country-simulation/S10-26-equipo-30/blob/main/entregables/etapa-2-testing/pieza-2-formulario-inicial/pieza-2-formulario-inicial.md) |
+| 3 | Post-envío y comunicación | ¿Qué necesita ver el decisor para no perder interés? | [Ver](https://github.com/No-Country-simulation/S10-26-equipo-30/blob/main/entregables/etapa-2-testing/pieza-3-post-envio/pieza-3-post-envio.md) |
+| 4 | Recuperación de abandonos | ¿Recuperamos cargas sin enviar con costo operativo bajo? | [Ver](https://github.com/No-Country-simulation/S10-26-equipo-30/blob/main/entregables/etapa-2-testing/pieza-4-recuperacion-de-abandonos/pieza-4-recuperacion-de-abandonos.md) |
+| 5 | Contexto adicional (scoring / P2P) | ¿Qué formato da más contexto con menos fricción? | [Ver](https://github.com/No-Country-simulation/S10-26-equipo-30/blob/main/entregables/etapa-2-testing/pieza-5-contexto-adicional/pieza-5-contexto-adicional.md) |
+| 6 | Aprobación y post-aprobación | ¿El email y el dashboard activo retienen al decisor? | [Ver](https://github.com/No-Country-simulation/S10-26-equipo-30/blob/main/entregables/etapa-2-testing/pieza-6-aprobacion/pieza-6-aprobacion.md) |
 
 ### Anexo pieza 1
 
@@ -39,5 +39,6 @@ Setup base de datos: [`supabase/SETUP.md`](../../supabase/SETUP.md). Diseño de 
 ## Enlaces relacionados
 
 - Etapa anterior: [Descubrimiento · mapa y Figma](../etapa-1-descubrimiento/README.md)
+- Etapa siguiente: [Entrega · producción y copy final](../etapa-3-entrega/README.md)
 - Índice en documentación: [`docs/02-testing`](../../docs/02-testing/README.md)
 - Índice general de entregables: [`entregables/README.md`](../README.md)
