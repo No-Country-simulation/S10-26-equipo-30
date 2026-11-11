@@ -1,4 +1,4 @@
-#Los 3 Hallazgos de Mayor Impacto
+# Los 3 Hallazgos de Mayor Impacto
 
 ### Hallazgo 1: 
 Dudas y falta de información del decisor El usuario puede avanzar pero lo hace con muchas dudas y ello impacta en las expectativas que se formó el decisor al decidir. 7 de 10 usuarios que completaron el flujo lo hicieron con cierta dificultad. Ello sugiere que si el usuario no entiende rápido el sentido de la información que se le solicita y como exponerla, la plataforma de carga puede ser muy estética pero no necesariamente más eficiente. Un claro ejemplo está en la primera pieza – el Dashboard público y la propuesta de valor -cuando “El texto de Free Trial ("antes de invertir", "Sin equipos garantizados") les hizo dudar del costo a Raquel, Adriana y Carlos”.
