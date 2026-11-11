@@ -53,12 +53,15 @@ async function loadDetail(submissionId: string): Promise<{
     p_submission_id: submissionId,
   });
   if (error) {
+    const denied =
+      error.message.includes("not_allowed") ||
+      error.message.includes("permission") ||
+      error.code === "PGRST116";
     return {
       detail: null,
-      error:
-        error.message.includes("not_allowed") || !data?.length
-          ? "No se encontró el envío o no tenés permiso para verlo."
-          : "No se pudo cargar el proyecto. ¿Corriste la migración de estado de revisión?",
+      error: denied
+        ? "No se encontró el envío o no tenés permiso para verlo."
+        : "No se pudo cargar el proyecto. ¿Corriste la migración de estado de revisión?",
     };
   }
   const row = Array.isArray(data) && data[0] ? parseSubmissionReviewDetail(data[0] as Record<string, unknown>) : null;
