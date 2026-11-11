@@ -7,7 +7,7 @@ Cierre del proyecto **UXFlow · equipo 30**: versión mejorada desplegada, sínt
 | Recurso | Descripción | Enlace |
 |---------|-------------|--------|
 | **Prototipo en producción** | Demo integrada (flujo decisor + paneles internos) | [https://s10-26-equipo-30.vercel.app/](https://s10-26-equipo-30.vercel.app/) |
-| **Síntesis ejecutiva** | Los 3 hallazgos de mayor impacto | [los-tres-hallazgos-de-mayor-impacto](./los-tres-hallazgos-de-mayor-impacto) · [GitHub](https://github.com/No-Country-simulation/S10-26-equipo-30/blob/main/entregables/etapa-3-entrega/los-tres-hallazgos-de-mayor-impacto) |
+| **Síntesis ejecutiva** | Los 3 hallazgos de mayor impacto | [los-tres-hallazgos-de-mayor-impacto](./los-tres-hallazgos-de-mayor-impacto.md) |
 | **Video demo** | Recorrido grabado del flujo mejorado | **[EN PROCESO]** |
 
 ## Copy final por pieza (producción)
